@@ -1,13 +1,29 @@
-<nav th:fragment="navbarFragment" 
-     class="navbar navbar-expand-lg navbar-warning bg-warning shadow bg-warning">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 
-	<!-- 전체  -->
+<style>
+    /* body 또는 전체적인 요소에 폰트 적용 */
+    body {
+        font-family: 'Noto Sans KR', sans-serif;
+    }
+    
+    /* 네비게이션 링크 폰트 크기 조정 및 색상 진하게 */
+    .navbar-nav .nav-link {
+        font-size: 1.1em; /* 폰트 크기 키우기 */
+        font-weight: 500; /* 폰트 두께 조정 */
+        margin-right: 15px; /* 메뉴 항목 간격 넓히기 (선택 사항) */
+    }
+</style>
+
+<nav th:fragment="navbarFragment" 
+     class="navbar navbar-expand-lg bg-body-tertiary"> 
+          
 	<div class="container-fluid">
 
-		<!-- 로고 이미지 부분 -->
-		<a class="navbar-brand" href="/"> <img
-			src="/image/egg.gif" alt="Logo" style="width: 50px;"
-			class="rounded-pill"></a>
+		<a class="navbar-brand" href="/"> 
+            <img src="/image/free-icon-tree-1213403.png" alt="Logo" style="width: 50px;" class="rounded-pill">
+        </a>
 							 
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 			data-bs-target="#navbarSupportedContent"
@@ -16,39 +32,24 @@
 			<span class="navbar-toggler-icon"></span>
 		</button>
 
-		<!-- 메뉴 부분 -->
-		<ul class="nav nav-pills nav-fill">
-			<li class="nav-item"><a class="nav-link" href="/">추천</a></li>
-			<li class="nav-item"><a class="nav-link" href="/section">분류</a></li>
-			<li class="nav-item"><a class="nav-link" href="/recipe/list">레시피</a></li>
-			<li class="nav-item"><a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/user/login}">마이페이지
-			</a>
-      	    <a class="nav-link" sec:authorize="isAuthenticated()"
-            th:href="@{/mypage/modifyProfile}">마이페이지</a>
-
-      </ul>
-			
-		<!-- 로그인 / 로그아웃 버튼 -->
-		<div class="nav justify-content-end" id="navbarSupportedContent">
-			<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-				<li class="d-flex">
-					<a class="nav-link btn btn-light float-end" type="button"
-					sec:authorize="isAnonymous()" th:href="@{/user/login}">로그인</a>&nbsp;
-					<a class="nav-link" sec:authorize="isAuthenticated()"
-					sec:authentication="name"></a> 
-					<a class="nav-link btn btn-light float-end" type="button"
-					sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>&nbsp;
+		<div class="collapse navbar-collapse justify-content-center" id="navbarSupportedContent">
+            
+            <ul class="navbar-nav mb-2 mb-lg-0">
+				<li class="nav-item">
+					<a class="nav-link active" aria-current="page" href="#">Home</a>
 				</li>
-
-				<!-- 회원가입 버튼 -->
-				<li class="nav-item"><a
-					class="nav-link btn btn-light float-end" type="button"
-					sec:authorize="isAnonymous()" th:href="@{/user/signup}">회원가입</a>
+				<li class="nav-item">
+					<a class="nav-link" href="/section">전국축제</a>
 				</li>
-		   </ul>
+				<li class="nav-item">
+					<a class="nav-link" href="/calendar">축제달력</a>
+				</li>
+			</ul>
+            
+            <form class="d-flex ms-auto" role="search">
+				<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+				<button class="btn btn-outline-success" type="submit">Search</button>
+			</form>
 		</div>
-		
-	<!-- [[${#authentication.principal}]] 로그인한 객체 보여주기 -->		
 	</div>
-	
 </nav>
