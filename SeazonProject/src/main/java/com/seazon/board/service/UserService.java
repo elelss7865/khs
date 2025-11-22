@@ -12,7 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.seazon.board.domain.Recipe;
+import com.seazon.board.domain.SignUp;
 import com.seazon.board.domain.SiteUser;
 import com.seazon.board.repository.UserRepository;
 import com.seazon.board.util.DataNotFoundException;
@@ -102,12 +102,12 @@ public class UserService {
     		return user;
     		}
     
-    public List<SiteUser> getUsers(Page<Recipe> recipes) {
+    public List<SiteUser> getUsers(Page<SignUp> sighUps) {
         List<SiteUser> users = new ArrayList<>();
-        List<Recipe> recipeList = recipes.toList();
-        for (int i = 0; i < recipeList.size(); i++) {
-            Recipe recipe = recipeList.get(i);
-            SiteUser siteUser = userRepository.findById((long) (recipe.getAuthor().getId())).get();
+        List<SignUp> sighUpList = sighUps.toList();
+        for (int i = 0; i < sighUpList.size(); i++) {
+            SignUp sighUp = sighUpList.get(i);
+            SiteUser siteUser = userRepository.findById((long) (sighUp.getAuthor().getId())).get();
             users.add(siteUser);
         }
         return users;

@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
    
-    <!-- Recipe List -->
+    <!-- sighUp List -->
       <table class="table">
          <thead class="table-dark">
             <tr class="text-center">
@@ -15,19 +15,19 @@
          </thead>
          
          <tbody>
-            <tr class="text-center" th:each="recipe, loop : ${paging}">
+            <tr class="text-center" th:each="sighUp, loop : ${paging}">
                 <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
                <td class="text-center">
-                  <a th:href="@{|/recipe/detail/${recipe.id}|}" th:text="${recipe.subject}"></a>
+                  <a th:href="@{|/sighUp/detail/${sighUp.id}|}" th:text="${sighUp.subject}"></a>
                   <span class="text-danger small ms-2"
-                        th:if="${#lists.size(recipe.answerList) > 0}" 
-                        th:text="${#lists.size(recipe.answerList)}">
+                        th:if="${#lists.size(sighUp.answerList) > 0}" 
+                        th:text="${#lists.size(sighUp.answerList)}">
                     </span>
                </td>
-               <td><span th:if="${recipe.author != null}" th:text="${recipe.author.nickname}"></span></td>
-               <td th:text="${#temporals.format(recipe.createDate, 'yyyy-MM-dd HH:mm')}"></td>
-               <td><span th:text="${#sets.size(recipe.voter)}"></span></td> <!-- 추천수 출력 -->
-               <td><span th:text="${recipe.view}"></span></td> <!-- 조회수 출력 -->
+               <td><span th:if="${sighUp.author != null}" th:text="${sighUp.author.nickname}"></span></td>
+               <td th:text="${#temporals.format(sighUp.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+               <td><span th:text="${#sets.size(sighUp.voter)}"></span></td> <!-- 추천수 출력 -->
+               <td><span th:text="${sighUp.view}"></span></td> <!-- 조회수 출력 -->
             </tr>
          </tbody>
       </table>
@@ -74,7 +74,7 @@
       <!-- 페이징처리 끝 -->
       
       <!-- page와 kw를 동시에 get요청 할수 있는 searchform -->
-      <form th:action="@{/recipe/list}" method="get" id="searchForm">
+      <form th:action="@{/sighUp/list}" method="get" id="searchForm">
            <input type="hidden" id="kw" name="kw" th:value="${kw}">
            <input type="hidden" id="page" name="page" th:value="${paging.number}">
        </form>

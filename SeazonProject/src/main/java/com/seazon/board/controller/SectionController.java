@@ -9,9 +9,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.seazon.board.domain.Recipe;
+import com.seazon.board.domain.SignUp;
 import com.seazon.board.domain.SiteUser;
-import com.seazon.board.service.RecipeService;
+import com.seazon.board.service.SignUpService;
 import com.seazon.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class SectionController {
 	
-	private final RecipeService recipeService;
+	private final SignUpService sighUpService;
 	private final UserService userService;
 	
 	// 페이징 구현(검색 기능 추가)
@@ -32,9 +32,9 @@ public class SectionController {
 	        @RequestParam(value = "kw", defaultValue = "") String kw,
 	        @RequestParam(value = "category", defaultValue = "") String category) {
 		
-	    Page<Recipe> paging3 = this.recipeService.getAllList(page, kw);
+	    Page<SignUp> paging3 = this.sighUpService.getAllList(page, kw);
 	    List<SiteUser> siteUsers3 = this.userService.getUsers(paging3);
-	    long totalCount = this.recipeService.getTotalCount();
+	    long totalCount = this.sighUpService.getTotalCount();
 	    
 	    model.addAttribute("siteUsers3", siteUsers3);    
 	    model.addAttribute("paging3", paging3);   // 전체 레시피 리스트

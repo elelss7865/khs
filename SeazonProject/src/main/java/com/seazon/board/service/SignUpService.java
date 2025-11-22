@@ -24,9 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.seazon.board.domain.Answer;
-import com.seazon.board.domain.Recipe;
+import com.seazon.board.domain.SignUp;
 import com.seazon.board.domain.SiteUser;
-import com.seazon.board.repository.RecipeRepository;
+import com.seazon.board.repository.SignUpRepository;
 import com.seazon.board.util.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -35,27 +35,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RecipeService {
+public class SignUpService {
 
-   private final RecipeRepository recipeRepository;
+   private final SignUpRepository sighUpRepository;
    
    // 검색 기능 (검색값 : kw)
       // Specification => 여러 테이블에서 데이터를 검색해야 할 경우에 JPA가 제공하는 인터페이스
-      private Specification<Recipe> search(String kw) {
+      private Specification<SignUp> search(String kw) {
           return new Specification<>() {
             private static final long serialVersionUID = 1L;
             
             @Override  
-            public Predicate toPredicate(Root<Recipe> r, CriteriaQuery<?> query, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<SignUp> r, CriteriaQuery<?> query, CriteriaBuilder cb) {
             	
-                  // r : 기준을 의미하는 Recipe
+                  // r : 기준을 의미하는 sighUp
                query.distinct(true);  // 중복을 제거
                
-               Join<Recipe, SiteUser> u1 = r.join("author", JoinType.LEFT); 
-                   // u1 : Recipe엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
+               Join<SignUp, SiteUser> u1 = r.join("author", JoinType.LEFT); 
+                   // u1 : sighUp엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
                
-               Join<Recipe, Answer> a = r.join("answerList", JoinType.LEFT);
-               // a : Recipe 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
+               Join<SignUp, Answer> a = r.join("answerList", JoinType.LEFT);
+               // a : sighUp 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
                
                Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
                     // u2 : a 와 다시한번 SiteUser 엔티티와 아우터 조인하여 SiteUser 엔티티의 객체(답변 작성자를 검색하기 위해서 필요)
@@ -73,16 +73,16 @@ public class RecipeService {
        }
       
       // 모든 엔티티 검색
-      public List<Recipe> getList() {
-         return this.recipeRepository.findAll();
+      public List<SignUp> getList() {
+         return this.sighUpRepository.findAll();
       }
       
-      public Recipe getRecipe(Integer id) {
-         Optional<Recipe> recipe = this.recipeRepository.findById(id);
-         if (recipe.isPresent()) {
-            return recipe.get();
+      public SignUp getsighUp(Integer id) {
+         Optional<SignUp> sighUp = this.sighUpRepository.findById(id);
+         if (sighUp.isPresent()) {
+            return sighUp.get();
          } else {
-            throw new DataNotFoundException("recipe not found");
+            throw new DataNotFoundException("sighUp not found");
          }
       }
       
@@ -108,10 +108,10 @@ public class RecipeService {
 		File contentSaveFile = new File(projectPath + "/contents", contentFileName);
 		contentFile.transferTo(contentSaveFile);
 		
-	     Recipe r = new Recipe();
+	     SignUp r = new SignUp();
 	     
 	     // String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-	     Recipe recipe = new Recipe();
+	     SignUp sighUp = new SignUp();
 	     r.setFileName(fileName);
 	     r.setFilePath("/files/" + fileName);
 	     r.setSubject(subject);
@@ -128,53 +128,53 @@ public class RecipeService {
 	     r.setContentFilePath("/files/contents/" + contentFileName);
 	     r.setAuthor(user);
 	           
-	       this.recipeRepository.save(r);
+	       this.sighUpRepository.save(r);
 	       
 	       log.info("로그create" + r);
       }
       		
 
       // 페이징 구현 기능(검색 기능 추가)
-      public Page<Recipe> getList(int page, String kw) {
+      public Page<SignUp> getList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-         Specification<Recipe> spec = search(kw);
-         return this.recipeRepository.findAll(spec, pageable);
+         Specification<SignUp> spec = search(kw);
+         return this.sighUpRepository.findAll(spec, pageable);
       }
       
       // 최근 게시물
-      public Page<Recipe> getRecentlyList(int page, String kw) {
+      public Page<SignUp> getRecentlyList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
-         Specification<Recipe> spec = search(kw);
-         return this.recipeRepository.findAll(spec, pageable);
+         Specification<SignUp> spec = search(kw);
+         return this.sighUpRepository.findAll(spec, pageable);
       }
       
       // 조회수 많은 게시물
-      public Page<Recipe> getTopList(int page, String kw) {
+      public Page<SignUp> getTopList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("view"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
-         Specification<Recipe> spec = search(kw);
-         return this.recipeRepository.findAll(spec, pageable);
+         Specification<SignUp> spec = search(kw);
+         return this.sighUpRepository.findAll(spec, pageable);
       }
       
      // 모든 게시물(section)
-      public Page<Recipe> getAllList(int page, String kw) {
+      public Page<SignUp> getAllList(int page, String kw) {
           List<Sort.Order> sorts = new ArrayList<>();
           sorts.add(Sort.Order.desc("createDate"));
           int pageSize = 20;
 
           Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sorts));
-          Specification<Recipe> spec = search(kw);
+          Specification<SignUp> spec = search(kw);
 
-          return this.recipeRepository.findAll(spec, pageable);
+          return this.sighUpRepository.findAll(spec, pageable);
       }
       
       // 모든 게시물(section)
-//      public Page<Recipe> getAllList(int page, String kw) {
+//      public Page<sighUp> getAllList(int page, String kw) {
 //  	    List<Sort.Order> sorts = new ArrayList<>();
 //  	    sorts.add(Sort.Order.desc("createDate"));
 //  	    int pageSize = 20; 
@@ -186,15 +186,15 @@ public class RecipeService {
 //  	    int adjustedPage = page % totalItemsPerPage;
 //
 //  	    Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(sorts)); // Fetch all items
-//  	    Specification<Recipe> spec = search(kw);
+//  	    Specification<sighUp> spec = search(kw);
 //
-//  	    Page<Recipe> result = this.recipeRepository.findAll(spec, pageable);
-//  	    List<Recipe> content = result.getContent();
+//  	    Page<sighUp> result = this.sighUpRepository.findAll(spec, pageable);
+//  	    List<sighUp> content = result.getContent();
 //
 //  	    int start = offset >= content.size() ? content.size() : offset;
 //  	    int end = Math.min(start + totalItemsPerPage, content.size());
 //
-//  	    List<Recipe> contentForPage = new ArrayList<>();
+//  	    List<sighUp> contentForPage = new ArrayList<>();
 //  	    for (int i = start; i < end; i++) {
 //  	        contentForPage.add(content.get(i));
 //  	    }
@@ -206,7 +206,7 @@ public class RecipeService {
 //  	}
       
       // 질문 수정 기능
-      public void modify(Recipe recipe, String subject, MultipartFile file, String cookIntro, String category,
+      public void modify(SignUp sighUp, String subject, MultipartFile file, String cookIntro, String category,
   			String cookInfo_level, String cookInfo_people, String cookInfo_time) throws Exception{
          String projectPath = "D:\\kim\\boot\\files";
            UUID uuid = UUID.randomUUID();
@@ -214,41 +214,41 @@ public class RecipeService {
            String filePath = "/files/" + fileName;
            File saveFile = new File(projectPath, fileName);
            file.transferTo(saveFile);
-           recipe.setFileName(fileName);
-           recipe.setFilePath(filePath);
-           recipe.setSubject(subject);
-//    	   recipe.setContent(content);
-    	   recipe.setCookIntro(cookIntro);
-    	   recipe.setCategory(category);
-    	   recipe.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
-    	   recipe.setCookInfo_level(cookInfo_level);
-    	   recipe.setCookInfo_people(cookInfo_people);
-    	   recipe.setCookInfo_time(cookInfo_time);
-    	   recipe.setModifyDate(LocalDateTime.now());
+           sighUp.setFileName(fileName);
+           sighUp.setFilePath(filePath);
+           sighUp.setSubject(subject);
+//    	   sighUp.setContent(content);
+    	   sighUp.setCookIntro(cookIntro);
+    	   sighUp.setCategory(category);
+    	   sighUp.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
+    	   sighUp.setCookInfo_level(cookInfo_level);
+    	   sighUp.setCookInfo_people(cookInfo_people);
+    	   sighUp.setCookInfo_time(cookInfo_time);
+    	   sighUp.setModifyDate(LocalDateTime.now());
 
-    	   this.recipeRepository.save(recipe);
+    	   this.sighUpRepository.save(sighUp);
       }
       
       // 질문 삭제 기능
-      public void delete(Recipe recipe) {
-         this.recipeRepository.delete(recipe);
+      public void delete(SignUp sighUp) {
+         this.sighUpRepository.delete(sighUp);
       }
       
       // 추천
-      public void vote(Recipe recipe, SiteUser siteuser) {
-         recipe.getVoter().add(siteuser);
-         this.recipeRepository.save(recipe);
+      public void vote(SignUp sighUp, SiteUser siteuser) {
+         sighUp.getVoter().add(siteuser);
+         this.sighUpRepository.save(sighUp);
       }
       
       // 추천레시피
       @Transactional
       public void incrementViewCount(int id) {
-          recipeRepository.incrementViewCount(id);
+          sighUpRepository.incrementViewCount(id);
       }
       
       // 전체 레시피 수
       public long getTotalCount() {
-    	    return recipeRepository.count();
+    	    return sighUpRepository.count();
       }
 
 }

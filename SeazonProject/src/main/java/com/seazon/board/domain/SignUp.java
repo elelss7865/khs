@@ -22,7 +22,7 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Recipe {
+public class SignUp {
 	 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,7 +36,7 @@ public class Recipe {
 	
 	private LocalDateTime createDate;  // 레시피 최초 작성 일시
 	
-	@OneToMany(mappedBy = "recipe", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "sighUp", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 	
 	@ManyToOne

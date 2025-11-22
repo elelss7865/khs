@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 @Data
-public class RecipeForm {
+public class SignUpForm {
 
 	@NotEmpty(message="제목은 필수항목입니다.")
 	@Size(max=200)

@@ -22,29 +22,29 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.seazon.board.domain.AnswerForm;
-import com.seazon.board.domain.Recipe;
-import com.seazon.board.domain.RecipeForm;
+import com.seazon.board.domain.SignUp;
+import com.seazon.board.domain.SignUpForm;
 import com.seazon.board.domain.SiteUser;
 import com.seazon.board.repository.UserRepository;
-import com.seazon.board.service.RecipeService;
+import com.seazon.board.service.SignUpService;
 import com.seazon.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequestMapping("/recipe")
+@RequestMapping("/signUp")
 @RequiredArgsConstructor
 @Controller
-public class RecipeController {
+public class SignUpController {
 
-	private final RecipeService recipeService;
+	private final SignUpService sighUpService;
 	private final UserService userService;
 	private final UserRepository userRepository;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
-//        List<Recipe> questionList = this.questionService.getList();
+//        List<sighUp> questionList = this.questionService.getList();
 //        model.addAttribute("questionList", questionList);
 //        return "question_list";
 //    }
@@ -54,108 +54,108 @@ public class RecipeController {
 	public String list(Model model, 
             @RequestParam(value="page", defaultValue="0") int page,
             @RequestParam(value = "kw", defaultValue = "") String kw) {
-		Page<Recipe> paging = this.recipeService.getList(page, kw);
+		Page<SignUp> paging = this.sighUpService.getList(page, kw);
 		
 		model.addAttribute("paging", paging);
 		model.addAttribute("kw", kw);
-		return "recipe_list";
+		return "sighUp_list";
 		}
 		
 	// 레시피 추가
 	@GetMapping(value = "/detail/{id}")
 	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
-	    Recipe recipe = recipeService.getRecipe(id);
-	    recipeService.incrementViewCount(id);
+	    SignUp sighUp = sighUpService.getsighUp(id);
+	    sighUpService.incrementViewCount(id);
 	    
 //	    log.info("유저네임" + question.getAuthor().getProfilePath());
-	    String profilePath = recipe.getAuthor().getProfilePath();
+	    String profilePath = sighUp.getAuthor().getProfilePath();
 	    model.addAttribute("profilePath", profilePath);
-	    model.addAttribute("recipe", recipe);
-	    return "recipe_detail";
+	    model.addAttribute("sighUp", sighUp);
+	    return "sighUp_detail";
 	}
     
 	// 접근제한(로그인 한 사용자만 접근가능)
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String recipeCreate(RecipeForm recipeForm) {
-        return "recipe_form";
+    public String sighUpCreate(SignUpForm signUpForm) {
+        return "sighUp_form";
     }
     
     // 레시피 작성
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String recipeCreate(@Valid RecipeForm recipeForm,
+    public String sighUpCreate(@Valid SignUpForm signUpForm,
             BindingResult bindingResult, Principal principal, MultipartFile file) throws Exception{
         if (bindingResult.hasErrors()) {
-            return "recipe_form";
+            return "sighUp_form";
             
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.recipeService.create(recipeForm.getSubject(), siteUser, recipeForm.getFile(),
-        		recipeForm.getCookIntro(), recipeForm.getCategory(), recipeForm.getCookInfo_level(), 
-        		recipeForm.getCookInfo_people(), recipeForm.getCookInfo_time(), recipeForm.getIngredient(),
-        		recipeForm.getCapacity(), recipeForm.getContent(), recipeForm.getContentFile());
-        log.info("로그(질문작성):" + recipeForm);
-        return "redirect:/recipe/list";
+        this.sighUpService.create(signUpForm.getSubject(), siteUser, signUpForm.getFile(),
+        		signUpForm.getCookIntro(), signUpForm.getCategory(), signUpForm.getCookInfo_level(), 
+        		signUpForm.getCookInfo_people(), signUpForm.getCookInfo_time(), signUpForm.getIngredient(),
+        		signUpForm.getCapacity(), signUpForm.getContent(), signUpForm.getContentFile());
+        log.info("로그(질문작성):" + signUpForm);
+        return "redirect:/sighUp/list";
     }
     
     // 질문 수정
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String recipeModify(RecipeForm recipeForm, @PathVariable("id") Integer id, Principal principal, 
+    public String sighUpModify(SignUpForm signUpForm, @PathVariable("id") Integer id, Principal principal, 
     		MultipartFile file) {
-    	Recipe recipe = this.recipeService.getRecipe(id);
-    	if(!recipe.getAuthor().getUsername().equals(principal.getName())) {
+    	SignUp sighUp = this.sighUpService.getsighUp(id);
+    	if(!sighUp.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
     	}
-    	recipeForm.setSubject(recipe.getSubject());
-    	recipeForm.setCookIntro(recipe.getCookIntro());
-    	recipeForm.setCategory(recipe.getCategory());
-    	recipeForm.setCookInfo_people(recipe.getCookInfo_level());
-    	recipeForm.setCookInfo_time(recipe.getCookInfo_people());
-    	recipeForm.setCookInfo_level(recipe.getCookInfo_time());
-    	recipeForm.setFile(file);
-    	return "recipe_form";
+    	signUpForm.setSubject(sighUp.getSubject());
+    	signUpForm.setCookIntro(sighUp.getCookIntro());
+    	signUpForm.setCategory(sighUp.getCategory());
+    	signUpForm.setCookInfo_people(sighUp.getCookInfo_level());
+    	signUpForm.setCookInfo_time(sighUp.getCookInfo_people());
+    	signUpForm.setCookInfo_level(sighUp.getCookInfo_time());
+    	signUpForm.setFile(file);
+    	return "sighUp_form";
     }
     
     // 질문 수정 후 저장
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String recipeModify(@Valid RecipeForm recipeForm, BindingResult bindingResult, 
+    public String sighUpModify(@Valid SignUpForm signUpForm, BindingResult bindingResult, 
             Principal principal, @PathVariable("id") Integer id, MultipartFile file) throws Exception {
         if (bindingResult.hasErrors()) {
-            return "recipe_form";
+            return "sighUp_form";
         }
-        Recipe recipe = this.recipeService.getRecipe(id);
-        if (!recipe.getAuthor().getUsername().equals(principal.getName())) {
+        SignUp sighUp = this.sighUpService.getsighUp(id);
+        if (!sighUp.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.recipeService.modify(recipe, recipeForm.getSubject(), recipeForm.getFile(),
-        		recipeForm.getCookIntro(),recipeForm.getCategory(),recipeForm.getCookInfo_level(),
-        		recipeForm.getCookInfo_people(),recipeForm.getCookInfo_time());
-        return String.format("redirect:/recipe/detail/%s", id);
+        this.sighUpService.modify(sighUp, signUpForm.getSubject(), signUpForm.getFile(),
+        		signUpForm.getCookIntro(),signUpForm.getCategory(),signUpForm.getCookInfo_level(),
+        		signUpForm.getCookInfo_people(),signUpForm.getCookInfo_time());
+        return String.format("redirect:/sighUp/detail/%s", id);
     }
     
     // 질문 삭제
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String recipeDaelete(Principal principal, @PathVariable("id") Integer id) {
-    	Recipe recipe = this.recipeService.getRecipe(id);
-    	if (!recipe.getAuthor().getUsername().equals(principal.getName())) {
+    public String sighUpDaelete(Principal principal, @PathVariable("id") Integer id) {
+    	SignUp sighUp = this.sighUpService.getsighUp(id);
+    	if (!sighUp.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제권한이 없습니다.");
     	}
-    	this.recipeService.delete(recipe);
+    	this.sighUpService.delete(sighUp);
     	return "redirect:/";
     }
     
     // 추천 버튼 클릭 시 호출
-    @PreAuthorize("isAuthenticated()")
+//    @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String recipeVote(Principal principal, @PathVariable("id") Integer id) {
-    	Recipe recipe = this.recipeService.getRecipe(id);
+    public String sighUpVote(Principal principal, @PathVariable("id") Integer id) {
+    	SignUp sighUp = this.sighUpService.getsighUp(id);
     	SiteUser siteuser = this.userService.getUser(principal.getName());
-    	this.recipeService.vote(recipe, siteuser);
-    	return String.format("redirect:/recipe/detail/%s", id);
+    	this.sighUpService.vote(sighUp, siteuser);
+    	return String.format("redirect:/sighUp/detail/%s", id);
     }
       
 }
