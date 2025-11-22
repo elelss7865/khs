@@ -30,7 +30,7 @@ public class Answer {
 	private LocalDateTime createDate; // 답변의 내용
 	
 	@ManyToOne  //  ManyToOne 은 부모 자식 관계를 갖는 구조에서 사용한다. 부모 = Question / 자식 = Answer
-	private SignUp signUp;  // 답변을 작성한 일시
+	private Travel travel;  // 답변을 작성한 일시
 	
 	@ManyToOne  // OneToMay => 1:N , ManyToOne => N:1
 	private SiteUser author;    // Answer 속성에 author 속성 추가

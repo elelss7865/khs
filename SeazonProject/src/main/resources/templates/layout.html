@@ -61,6 +61,15 @@
   color: #fff !important;
   border-color: #fff !important;
 }
+
+.custom-navbar {
+  display: flex;
+  align-items: center;
+}
+
+.search-box {
+  flex-shrink: 0;
+}
 </style>
 
 <!-- Required meta tags -->
@@ -80,17 +89,16 @@
 
 <!-- templates_style CSS -->
 <link rel="stylesheet" type="text/css"
-	th:href="@{/css/signup_style.css}">
+	th:href="@{/css/travel_style.css}">
 <link rel="stylesheet" type="text/css" th:href="@{/css/index_style.css}">
 <link rel="stylesheet" type="text/css"
 	th:href="@{/css/login_form_style.css}">
 
 <!-- templates_script JS -->
-<script th:src="@{/js/signup_script.js}" charset="UTF-8"></script>
-<script th:src="@{/js/signUp_script.js}" charset="UTF-8"></script>
+<script th:src="@{/js/travel_script.js}" charset="UTF-8"></script>
 
 <!-- 1단계 : daum 우편번호 서비스 외장 JS(Javascript) 파일 링크 -->
-<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
 <title>사계로</title>
 </head>

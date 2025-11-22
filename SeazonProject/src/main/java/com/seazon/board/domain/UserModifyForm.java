@@ -36,9 +36,9 @@ public class UserModifyForm {
    private String password_now;
    
    /**비밀번호 */
-   @Pattern(regexp="(?=.*\\d)(?=.*[a-zA-Z])(?=.*\\W).{8,20}",
-          message="비밀번호는 8~20사이의 영문 대소/특수문자를 최소 1자 이상씩  입력하십시오.")
-   @NotEmpty(message="비밀번호는 필수사항입니다.")
+	@Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d).{6,20}$",
+	         message="비밀번호는 6~20자, 영문과 숫자를 최소 1자 이상 포함해야 합니다.")
+	@NotEmpty(message="비밀번호는 필수사항입니다.")
    private String password1;
    
    /** 비밀번호 확인 */
@@ -83,14 +83,14 @@ public class UserModifyForm {
 //   @Past(message="생일은 금일 기준 이전 일이 들어가야합니다.")
 //   private Date birthday;
    
-   /** 프로필사진 */
-   private MultipartFile profile;
-   
-   /** 프로필 사진 이름*/
-   private String profileName;
-   
-   /** 프로필 사진 경로*/
-   private String profilePath;
+//   /** 프로필사진 */
+//   private MultipartFile profile;
+//   
+//   /** 프로필 사진 이름*/
+//   private String profileName;
+//   
+//   /** 프로필 사진 경로*/
+//   private String profilePath;
    
    public UserModifyForm(SiteUser siteUser) {
       this.username = siteUser.getUsername();
@@ -106,8 +106,8 @@ public class UserModifyForm {
       this.address1 = siteUser.getAddress1();
       this.address2 = siteUser.getAddress2();
 //      this.birthday = siteUser.getBirthday();
-      this.profileName = siteUser.getProfileName();
-      this.profilePath = siteUser.getProfilePath();
+//      this.profileName = siteUser.getProfileName();
+//      this.profilePath = siteUser.getProfilePath();
    }
 }
 

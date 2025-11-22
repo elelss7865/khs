@@ -24,9 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.seazon.board.domain.Answer;
-import com.seazon.board.domain.SignUp;
+import com.seazon.board.domain.Travel;
 import com.seazon.board.domain.SiteUser;
-import com.seazon.board.repository.SignUpRepository;
+import com.seazon.board.repository.TravelRepository;
 import com.seazon.board.util.DataNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -35,27 +35,27 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SignUpService {
+public class TravelService {
 
-   private final SignUpRepository signUpRepository;
+   private final TravelRepository travelRepository;
    
    // 검색 기능 (검색값 : kw)
       // Specification => 여러 테이블에서 데이터를 검색해야 할 경우에 JPA가 제공하는 인터페이스
-      private Specification<SignUp> search(String kw) {
+      private Specification<Travel> search(String kw) {
           return new Specification<>() {
             private static final long serialVersionUID = 1L;
             
             @Override  
-            public Predicate toPredicate(Root<SignUp> r, CriteriaQuery<?> query, CriteriaBuilder cb) {
+            public Predicate toPredicate(Root<Travel> r, CriteriaQuery<?> query, CriteriaBuilder cb) {
             	
-                  // r : 기준을 의미하는 signUp
+                  // r : 기준을 의미하는 travel
                query.distinct(true);  // 중복을 제거
                
-               Join<SignUp, SiteUser> u1 = r.join("author", JoinType.LEFT); 
-                   // u1 : signUp엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
+               Join<Travel, SiteUser> u1 = r.join("author", JoinType.LEFT); 
+                   // u1 : travel엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
                
-               Join<SignUp, Answer> a = r.join("answerList", JoinType.LEFT);
-               // a : signUp 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
+               Join<Travel, Answer> a = r.join("answerList", JoinType.LEFT);
+               // a : travel 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
                
                Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
                     // u2 : a 와 다시한번 SiteUser 엔티티와 아우터 조인하여 SiteUser 엔티티의 객체(답변 작성자를 검색하기 위해서 필요)
@@ -67,28 +67,28 @@ public class SignUpService {
                        cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용 
                        cb.like(u2.get("username"), "%" + kw + "%"),   // 답변 작성자 
                		   cb.like(r.get("category"), "%" + kw + "%"),    // 카테고리
-                       cb.like(r.get("cookInfo"), "%" + kw + "%"));    // 요리정보
+                       cb.like(r.get("travelInfo"), "%" + kw + "%"));    // 요리정보
                }
            };
        }
       
       // 모든 엔티티 검색
-      public List<SignUp> getList() {
-         return this.signUpRepository.findAll();
+      public List<Travel> getList() {
+         return this.travelRepository.findAll();
       }
       
-      public SignUp getsignUp(Integer id) {
-         Optional<SignUp> signUp = this.signUpRepository.findById(id);
-         if (signUp.isPresent()) {
-            return signUp.get();
+      public Travel getTravel(Integer id) {
+         Optional<Travel> travel = this.travelRepository.findById(id);
+         if (travel.isPresent()) {
+            return travel.get();
          } else {
-            throw new DataNotFoundException("signUp not found");
+            throw new DataNotFoundException("travel not found");
          }
       }
       
-      // 레시피 저장 기능
-      public void create(String subject, SiteUser user, MultipartFile file, String cookIntro, String category,
-              String cookInfo_level, String cookInfo_people, String cookInfo_time, String ingredient, String capacity,
+      // 여행 저장 기능
+      public void create(String subject, SiteUser user, MultipartFile file, String travelIntro, String category,
+              String travelInfo_level, String travelInfo_people, String travelInfo_time, String ingredient, String capacity,
               String content, MultipartFile contentFile) throws Exception {
     	  
 		// Check if the parameters are null or empty
@@ -103,78 +103,78 @@ public class SignUpService {
 		File saveFile = new File(projectPath, fileName);
 		file.transferTo(saveFile);
 		
-		// 레시피 순서 이미지 저장
+		// 여행 순서 이미지 저장
 		String contentFileName = uuid + "_" + contentFile.getOriginalFilename();
 		File contentSaveFile = new File(projectPath + "/contents", contentFileName);
 		contentFile.transferTo(contentSaveFile);
 		
-	     SignUp r = new SignUp();
+	     Travel r = new Travel();
 	     
 	     // String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-	     SignUp signUp = new SignUp();
+	     Travel travel = new Travel();
 	     r.setFileName(fileName);
 	     r.setFilePath("/files/" + fileName);
 	     r.setSubject(subject);
 	     r.setCreateDate(LocalDateTime.now());
-	     r.setCookIntro(cookIntro);
+	     r.setTravelIntro(travelIntro);
 	     r.setCategory(category);
-	     r.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
-	     r.setCookInfo_level(cookInfo_level);
-	     r.setCookInfo_people(cookInfo_people);
-	     r.setCookInfo_time(cookInfo_time);
+	     r.setTravelInfo(travelInfo_level + travelInfo_people + travelInfo_time);
+	     r.setTravelInfo_level(travelInfo_level);
+	     r.setTravelInfo_people(travelInfo_people);
+	     r.setTravelInfo_time(travelInfo_time);
 	     r.setIngredient(ingredient);
 	     r.setCapacity(capacity);
 	     r.setContent(content);
 	     r.setContentFilePath("/files/contents/" + contentFileName);
 	     r.setAuthor(user);
 	           
-	       this.signUpRepository.save(r);
+	       this.travelRepository.save(r);
 	       
 	       log.info("로그create" + r);
       }
       		
 
       // 페이징 구현 기능(검색 기능 추가)
-      public Page<SignUp> getList(int page, String kw) {
+      public Page<Travel> getList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-         Specification<SignUp> spec = search(kw);
-         return this.signUpRepository.findAll(spec, pageable);
+         Specification<Travel> spec = search(kw);
+         return this.travelRepository.findAll(spec, pageable);
       }
       
       // 최근 게시물
-      public Page<SignUp> getRecentlyList(int page, String kw) {
+      public Page<Travel> getRecentlyList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
-         Specification<SignUp> spec = search(kw);
-         return this.signUpRepository.findAll(spec, pageable);
+         Specification<Travel> spec = search(kw);
+         return this.travelRepository.findAll(spec, pageable);
       }
       
       // 조회수 많은 게시물
-      public Page<SignUp> getTopList(int page, String kw) {
+      public Page<Travel> getTopList(int page, String kw) {
          List<Sort.Order> sorts = new ArrayList<>();
          sorts.add(Sort.Order.desc("view"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
-         Specification<SignUp> spec = search(kw);
-         return this.signUpRepository.findAll(spec, pageable);
+         Specification<Travel> spec = search(kw);
+         return this.travelRepository.findAll(spec, pageable);
       }
       
      // 모든 게시물(section)
-      public Page<SignUp> getAllList(int page, String kw) {
+      public Page<Travel> getAllList(int page, String kw) {
           List<Sort.Order> sorts = new ArrayList<>();
           sorts.add(Sort.Order.desc("createDate"));
           int pageSize = 20;
 
           Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sorts));
-          Specification<SignUp> spec = search(kw);
+          Specification<Travel> spec = search(kw);
 
-          return this.signUpRepository.findAll(spec, pageable);
+          return this.travelRepository.findAll(spec, pageable);
       }
       
       // 모든 게시물(section)
-//      public Page<signUp> getAllList(int page, String kw) {
+//      public Page<travel> getAllList(int page, String kw) {
 //  	    List<Sort.Order> sorts = new ArrayList<>();
 //  	    sorts.add(Sort.Order.desc("createDate"));
 //  	    int pageSize = 20; 
@@ -186,15 +186,15 @@ public class SignUpService {
 //  	    int adjustedPage = page % totalItemsPerPage;
 //
 //  	    Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(sorts)); // Fetch all items
-//  	    Specification<signUp> spec = search(kw);
+//  	    Specification<travel> spec = search(kw);
 //
-//  	    Page<signUp> result = this.signUpRepository.findAll(spec, pageable);
-//  	    List<signUp> content = result.getContent();
+//  	    Page<travel> result = this.travelRepository.findAll(spec, pageable);
+//  	    List<travel> content = result.getContent();
 //
 //  	    int start = offset >= content.size() ? content.size() : offset;
 //  	    int end = Math.min(start + totalItemsPerPage, content.size());
 //
-//  	    List<signUp> contentForPage = new ArrayList<>();
+//  	    List<travel> contentForPage = new ArrayList<>();
 //  	    for (int i = start; i < end; i++) {
 //  	        contentForPage.add(content.get(i));
 //  	    }
@@ -206,49 +206,49 @@ public class SignUpService {
 //  	}
       
       // 질문 수정 기능
-      public void modify(SignUp signUp, String subject, MultipartFile file, String cookIntro, String category,
-  			String cookInfo_level, String cookInfo_people, String cookInfo_time) throws Exception{
+      public void modify(Travel travel, String subject, MultipartFile file, String travelIntro, String category,
+  			String travelInfo_level, String travelInfo_people, String travelInfo_time) throws Exception{
          String projectPath = "D:\\kim\\boot\\files";
            UUID uuid = UUID.randomUUID();
            String fileName = uuid + "_" + file.getOriginalFilename();
            String filePath = "/files/" + fileName;
            File saveFile = new File(projectPath, fileName);
            file.transferTo(saveFile);
-           signUp.setFileName(fileName);
-           signUp.setFilePath(filePath);
-           signUp.setSubject(subject);
-//    	   signUp.setContent(content);
-    	   signUp.setCookIntro(cookIntro);
-    	   signUp.setCategory(category);
-    	   signUp.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
-    	   signUp.setCookInfo_level(cookInfo_level);
-    	   signUp.setCookInfo_people(cookInfo_people);
-    	   signUp.setCookInfo_time(cookInfo_time);
-    	   signUp.setModifyDate(LocalDateTime.now());
+           travel.setFileName(fileName);
+           travel.setFilePath(filePath);
+           travel.setSubject(subject);
+//    	   travel.setContent(content);
+    	   travel.setTravelIntro(travelIntro);
+    	   travel.setCategory(category);
+    	   travel.setTravelInfo(travelInfo_level + travelInfo_people + travelInfo_time);
+    	   travel.setTravelInfo_level(travelInfo_level);
+    	   travel.setTravelInfo_people(travelInfo_people);
+    	   travel.setTravelInfo_time(travelInfo_time);
+    	   travel.setModifyDate(LocalDateTime.now());
 
-    	   this.signUpRepository.save(signUp);
+    	   this.travelRepository.save(travel);
       }
       
       // 질문 삭제 기능
-      public void delete(SignUp signUp) {
-         this.signUpRepository.delete(signUp);
+      public void delete(Travel travel) {
+         this.travelRepository.delete(travel);
       }
       
       // 추천
-      public void vote(SignUp signUp, SiteUser siteuser) {
-         signUp.getVoter().add(siteuser);
-         this.signUpRepository.save(signUp);
+      public void vote(Travel travel, SiteUser siteuser) {
+         travel.getVoter().add(siteuser);
+         this.travelRepository.save(travel);
       }
       
-      // 추천레시피
+      // 추천여행
       @Transactional
       public void incrementViewCount(int id) {
-          signUpRepository.incrementViewCount(id);
+          travelRepository.incrementViewCount(id);
       }
       
-      // 전체 레시피 수
+      // 전체 여행 수
       public long getTotalCount() {
-    	    return signUpRepository.count();
+    	    return travelRepository.count();
       }
 
 }

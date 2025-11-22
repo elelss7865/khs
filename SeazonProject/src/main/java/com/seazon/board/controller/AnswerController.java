@@ -17,10 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.seazon.board.domain.Answer;
 import com.seazon.board.domain.AnswerForm;
-import com.seazon.board.domain.SignUp;
+import com.seazon.board.domain.Travel;
 import com.seazon.board.domain.SiteUser;
 import com.seazon.board.service.AnswerService;
-import com.seazon.board.service.SignUpService;
+import com.seazon.board.service.TravelService;
 import com.seazon.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class AnswerController {
 
-    private final SignUpService signUpService;
+    private final TravelService travelService;
     private final AnswerService answerService;
     private final UserService userService;
     
@@ -39,16 +39,16 @@ public class AnswerController {
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Integer id, 
             @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal) {
-        SignUp signUp = this.signUpService.getsignUp(id);
+        Travel travel = this.travelService.getTravel(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         if (bindingResult.hasErrors()) {
-            model.addAttribute("signUp", signUp);
-            return "signUp_detail";
+            model.addAttribute("travel", travel);
+            return "travel_detail";
         }
-        Answer answer = this.answerService.create(signUp, 
+        Answer answer = this.answerService.create(travel, 
                 answerForm.getContent(), siteUser);
-        return String.format("redirect:/signUp/detail/%s#answer_%s", 
-                answer.getSignUp().getId(), answer.getId());
+        return String.format("redirect:/travel/detail/%s#answer_%s", 
+                answer.getTravel().getId(), answer.getId());
     }
     
     // 댓글 수정 Get 방식 처리
@@ -76,8 +76,8 @@ public class AnswerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정완료되었습니다.");
         }
         this.answerService.modify(answer, answerForm.getContent());
-        return String.format("redirect:/signUp/detail/%s#answer_%s", 
-                answer.getSignUp().getId(), answer.getId());
+        return String.format("redirect:/travel/detail/%s#answer_%s", 
+                answer.getTravel().getId(), answer.getId());
     }
     
     
@@ -90,7 +90,7 @@ public class AnswerController {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제하시겠습니까?.");
     	}
     	this.answerService.delete(answer);
-    	return String.format("redirect:/signUp/detail/%s", answer.getSignUp().getId());
+    	return String.format("redirect:/travel/detail/%s", answer.getTravel().getId());
     } 
     
      // 댓글 추천 버튼 클릭시 호출(답변 앵커 추가)
@@ -100,8 +100,8 @@ public class AnswerController {
     	Answer answer = this.answerService.getAnswer(id);
     	SiteUser siteUser = this.userService.getUser(principal.getName());
     	this.answerService.vote(answer, siteUser);
-    	return String.format("redirect:/signUp/detail/%s#answer_%s", 
-    			answer.getSignUp().getId(),answer.getId());    }
+    	return String.format("redirect:/travel/detail/%s#answer_%s", 
+    			answer.getTravel().getId(),answer.getId());    }
     
     
 }

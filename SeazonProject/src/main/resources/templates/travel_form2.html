@@ -1,24 +1,24 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container">
 
-   <!-- 질문등록 -->
-   <h5 class="my-5 border-bottom pb-2">레시피 등록</h5>
+   <!-- 축제 등록 -->
+   <h5 class="my-5 border-bottom pb-2">축제 등록</h5>
    
-   <form th:object="${signUpForm}" method="post"
+   <form th:object="${travelForm}" method="post"
       enctype="multipart/form-data">
       <input type="hidden" th:name="${_csrf.parameterName}"
          th:value="${_csrf.token}" />
       <div th:replace="form_errors :: formErrorsFragment"></div>
 
-      <!-- 레시피 등록 -->
+      <!--  등록 -->
       <table class="table table-borderless" style="margin: 20px 0px 0px 0px;">
 
          <tbody>
 
-            <!-- 레시피 제목(subject) -->
+            <!-- 여행 제목(subject) -->
             <tr>
                <td></td>
-               <td><label for="subject" class="form-label">레시피 제목</label></td>
+               <td><label for="subject" class="form-label">여행 제목</label></td>
                <td><input type="text" th:field="*{subject}" class="form-control"></td>
                   
             <!-- 사진 첨부 -->      
@@ -28,11 +28,11 @@
                     </td>
             </tr>
 
-            <!-- 요리소개(cookIntro) -->
+            <!-- 요리소개(travelIntro) -->
             <tr>
                <td></td>
-               <td><label for="cookIntro" class="form-label">요리소개</label></td>
-               <td><textarea type="text" th:field="*{cookIntro}"
+               <td><label for="travelIntro" class="form-label">요리소개</label></td>
+               <td><textarea type="text" th:field="*{travelIntro}"
                      class="form-control"></textarea></td>
             </tr>
 

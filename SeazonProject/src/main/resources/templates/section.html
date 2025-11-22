@@ -80,28 +80,28 @@
 			</tr>
 	</table>
 
-	<!-- 전체 레시피 -->
+	<!-- 전체 여행 -->
 		<table class="table table-borderless">
 			<tr class="row">
-				<td class="col-md-3 d-flex justify-content-center" th:each="signUp, loop : ${paging3}">
+				<td class="col-md-3 d-flex justify-content-center" th:each="travel, loop : ${paging3}">
 					<div class="card" style="width: 15rem;">
-						<img th:src="${signUp.filePath}" style="width: 239px; height: 200px;" class="card-img-top"
+						<img th:src="${travel.filePath}" style="width: 239px; height: 200px;" class="card-img-top"
 							alt="...">
 
 						<div class="card-body">
 							<h5 class="card-title">
 								<img th:src="${siteUsers3.get(loop.index).profilePath}"
 									class="rounded-circle" width="35px" height="35px"> <span
-									th:if="${signUp.author != null}"
-									th:text="${signUp.author.nickname}"></span>
+									th:if="${travel.author != null}"
+									th:text="${travel.author.nickname}"></span>
 							</h5>
 
 							<div class="card-text">
-								<a th:href="@{|/signUp/detail/${signUp.id}|}"
-									th:text="${signUp.subject}"></a>
+								<a th:href="@{|/travel/detail/${travel.id}|}"
+									th:text="${travel.subject}"></a>
 							</div>
 
-							추천수 : <span th:text="${#sets.size(signUp.voter)}"></span>
+							추천수 : <span th:text="${#sets.size(travel.voter)}"></span>
 						</div>
 					</div>
 				</td>
@@ -148,7 +148,7 @@
 		<!-- 페이징처리 끝 -->
 
 		<!-- page와 kw를 동시에 get요청 할수 있는 searchform -->
-		<form th:action="@{/signUp/list}" method="get" id="searchForm">
+		<form th:action="@{/travel/list}" method="get" id="searchForm">
 			<input type="hidden" id="kw" name="kw" th:value="${kw}"> <input
 				type="hidden" id="page" name="page" th:value="${paging3.number}">
 		</form>

@@ -8,9 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.seazon.board.domain.SignUp;
+import com.seazon.board.domain.Travel;
 import com.seazon.board.domain.SiteUser;
-import com.seazon.board.service.SignUpService;
+import com.seazon.board.service.TravelService;
 import com.seazon.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -22,16 +22,16 @@ import lombok.RequiredArgsConstructor;
 // @Slf4j
 
 public class IndexController {
-    private final SignUpService signUpService;
+    private final TravelService travelService;
     private final UserService userService;
 
     @GetMapping("/index")
     public String list(Model model,
                        @RequestParam(value="page", defaultValue="0") int page,
                        @RequestParam(value = "kw", defaultValue = "") String kw) {
-        Page<SignUp> paging1 = this.signUpService.getTopList(page, kw);
+        Page<Travel> paging1 = this.travelService.getTopList(page, kw);
         List<SiteUser> siteUsers1 = this.userService.getUsers(paging1);
-        Page<SignUp> paging2 = this.signUpService.getRecentlyList(page, kw);
+        Page<Travel> paging2 = this.travelService.getRecentlyList(page, kw);
         List<SiteUser> siteUsers2 = this.userService.getUsers(paging2);
 
         model.addAttribute("siteUsers1", siteUsers1);

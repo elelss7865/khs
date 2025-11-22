@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.seazon.board.domain.Answer;
-import com.seazon.board.domain.SignUp;
+import com.seazon.board.domain.Travel;
 import com.seazon.board.domain.SiteUser;
 import com.seazon.board.repository.AnswerRepository;
 import com.seazon.board.util.DataNotFoundException;
@@ -19,11 +19,11 @@ public class AnswerService {
 	
 	private final AnswerRepository answerRepository;
 	
-	public Answer create(SignUp signUp, String content, SiteUser author) {
+	public Answer create(Travel travel, String content, SiteUser author) {
 		Answer answer = new Answer();
 		answer.setContent(content);
 		answer.setCreateDate(LocalDateTime.now());
-		answer.setSignUp(signUp);
+		answer.setTravel(travel);
 		answer.setAuthor(author);
 		this.answerRepository.save(answer);
 		return answer;

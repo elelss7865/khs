@@ -49,7 +49,6 @@ public class UserController {
 	        try {
 				userService.create(userCreateForm.getUsername(), userCreateForm.getPassword1(), 
 				userCreateForm.getEmail(), userCreateForm.getName(),
-				userCreateForm.getNickname(), userCreateForm.getProfile(),
 				userCreateForm.getMobile(), userCreateForm.getZip(), 
 				userCreateForm.getAddress1(), userCreateForm.getAddress2(),
 				userCreateForm.getJoindate());

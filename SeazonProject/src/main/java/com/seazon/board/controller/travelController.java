@@ -22,29 +22,29 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.seazon.board.domain.AnswerForm;
-import com.seazon.board.domain.SignUp;
-import com.seazon.board.domain.SignUpForm;
+import com.seazon.board.domain.Travel;
+import com.seazon.board.domain.TravelForm;
 import com.seazon.board.domain.SiteUser;
 import com.seazon.board.repository.UserRepository;
-import com.seazon.board.service.SignUpService;
+import com.seazon.board.service.TravelService;
 import com.seazon.board.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RequestMapping("/signUp")
+@RequestMapping("/travel")
 @RequiredArgsConstructor
 @Controller
-public class SignUpController {
+public class travelController {
 
-	private final SignUpService signUpService;
+	private final TravelService travelService;
 	private final UserService userService;
 	private final UserRepository userRepository;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
-//        List<signUp> questionList = this.questionService.getList();
+//        List<travel> questionList = this.questionService.getList();
 //        model.addAttribute("questionList", questionList);
 //        return "question_list";
 //    }
@@ -54,108 +54,108 @@ public class SignUpController {
 	public String list(Model model, 
             @RequestParam(value="page", defaultValue="0") int page,
             @RequestParam(value = "kw", defaultValue = "") String kw) {
-		Page<SignUp> paging = this.signUpService.getList(page, kw);
+		Page<Travel> paging = this.travelService.getList(page, kw);
 		
 		model.addAttribute("paging", paging);
 		model.addAttribute("kw", kw);
-		return "signUp_list";
+		return "travel_list";
 		}
 		
-	// 레시피 추가
+	// 여행 추가
 	@GetMapping(value = "/detail/{id}")
 	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
-	    SignUp signUp = signUpService.getsignUp(id);
-	    signUpService.incrementViewCount(id);
+	    Travel travel = travelService.getTravel(id);
+	    travelService.incrementViewCount(id);
 	    
 //	    log.info("유저네임" + question.getAuthor().getProfilePath());
-	    String profilePath = signUp.getAuthor().getProfilePath();
+	    String profilePath = travel.getAuthor().getProfilePath();
 	    model.addAttribute("profilePath", profilePath);
-	    model.addAttribute("signUp", signUp);
-	    return "signUp_detail";
+	    model.addAttribute("travel", travel);
+	    return "travel_detail";
 	}
     
 	// 접근제한(로그인 한 사용자만 접근가능)
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String signUpCreate(SignUpForm signUpForm) {
-        return "signUp_form";
+    public String travelCreate(TravelForm travelForm) {
+        return "travel_form";
     }
     
-    // 레시피 작성
+    // 여행 작성
 //    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String signUpCreate(@Valid SignUpForm signUpForm,
+    public String travelCreate(@Valid TravelForm travelForm,
             BindingResult bindingResult, Principal principal, MultipartFile file) throws Exception{
         if (bindingResult.hasErrors()) {
-            return "signUp_form";
+            return "travel_form";
             
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.signUpService.create(signUpForm.getSubject(), siteUser, signUpForm.getFile(),
-        		signUpForm.getCookIntro(), signUpForm.getCategory(), signUpForm.getCookInfo_level(), 
-        		signUpForm.getCookInfo_people(), signUpForm.getCookInfo_time(), signUpForm.getIngredient(),
-        		signUpForm.getCapacity(), signUpForm.getContent(), signUpForm.getContentFile());
-        log.info("로그(질문작성):" + signUpForm);
-        return "redirect:/signUp/list";
+        this.travelService.create(travelForm.getSubject(), siteUser, travelForm.getFile(),
+        		travelForm.getTravelIntro(), travelForm.getCategory(), travelForm.getTravelInfo_level(), 
+        		travelForm.getTravelInfo_people(), travelForm.getTravelInfo_time(), travelForm.getIngredient(),
+        		travelForm.getCapacity(), travelForm.getContent(), travelForm.getContentFile());
+        log.info("로그(질문작성):" + travelForm);
+        return "redirect:/travel/list";
     }
     
     // 질문 수정
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String signUpModify(SignUpForm signUpForm, @PathVariable("id") Integer id, Principal principal, 
+    public String travelModify(TravelForm travelForm, @PathVariable("id") Integer id, Principal principal, 
     		MultipartFile file) {
-    	SignUp signUp = this.signUpService.getsignUp(id);
-    	if(!signUp.getAuthor().getUsername().equals(principal.getName())) {
+    	Travel travel = this.travelService.getTravel(id);
+    	if(!travel.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
     	}
-    	signUpForm.setSubject(signUp.getSubject());
-    	signUpForm.setCookIntro(signUp.getCookIntro());
-    	signUpForm.setCategory(signUp.getCategory());
-    	signUpForm.setCookInfo_people(signUp.getCookInfo_level());
-    	signUpForm.setCookInfo_time(signUp.getCookInfo_people());
-    	signUpForm.setCookInfo_level(signUp.getCookInfo_time());
-    	signUpForm.setFile(file);
-    	return "signUp_form";
+    	travelForm.setSubject(travel.getSubject());
+    	travelForm.setTravelIntro(travel.getTravelIntro());
+    	travelForm.setCategory(travel.getCategory());
+    	travelForm.setTravelInfo_people(travel.getTravelInfo_level());
+    	travelForm.setTravelInfo_time(travel.getTravelInfo_people());
+    	travelForm.setTravelInfo_level(travel.getTravelInfo_time());
+    	travelForm.setFile(file);
+    	return "travel_form";
     }
     
     // 질문 수정 후 저장
 //    @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String signUpModify(@Valid SignUpForm signUpForm, BindingResult bindingResult, 
+    public String travelModify(@Valid TravelForm travelForm, BindingResult bindingResult, 
             Principal principal, @PathVariable("id") Integer id, MultipartFile file) throws Exception {
         if (bindingResult.hasErrors()) {
-            return "signUp_form";
+            return "travel_form";
         }
-        SignUp signUp = this.signUpService.getsignUp(id);
-        if (!signUp.getAuthor().getUsername().equals(principal.getName())) {
+        Travel travel = this.travelService.getTravel(id);
+        if (!travel.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.signUpService.modify(signUp, signUpForm.getSubject(), signUpForm.getFile(),
-        		signUpForm.getCookIntro(),signUpForm.getCategory(),signUpForm.getCookInfo_level(),
-        		signUpForm.getCookInfo_people(),signUpForm.getCookInfo_time());
-        return String.format("redirect:/signUp/detail/%s", id);
+        this.travelService.modify(travel, travelForm.getSubject(), travelForm.getFile(),
+        		travelForm.getTravelIntro(),travelForm.getCategory(),travelForm.getTravelInfo_level(),
+        		travelForm.getTravelInfo_people(),travelForm.getTravelInfo_time());
+        return String.format("redirect:/travel/detail/%s", id);
     }
     
     // 질문 삭제
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String signUpDaelete(Principal principal, @PathVariable("id") Integer id) {
-    	SignUp signUp = this.signUpService.getsignUp(id);
-    	if (!signUp.getAuthor().getUsername().equals(principal.getName())) {
+    public String travelDaelete(Principal principal, @PathVariable("id") Integer id) {
+    	Travel travel = this.travelService.getTravel(id);
+    	if (!travel.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제권한이 없습니다.");
     	}
-    	this.signUpService.delete(signUp);
+    	this.travelService.delete(travel);
     	return "redirect:/";
     }
     
     // 추천 버튼 클릭 시 호출
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String signUpVote(Principal principal, @PathVariable("id") Integer id) {
-    	SignUp signUp = this.signUpService.getsignUp(id);
+    public String travelVote(Principal principal, @PathVariable("id") Integer id) {
+    	Travel travel = this.travelService.getTravel(id);
     	SiteUser siteuser = this.userService.getUser(principal.getName());
-    	this.signUpService.vote(signUp, siteuser);
-    	return String.format("redirect:/signUp/detail/%s", id);
+    	this.travelService.vote(travel, siteuser);
+    	return String.format("redirect:/travel/detail/%s", id);
     }
       
 }

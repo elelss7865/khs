@@ -1,0 +1,167 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-5">
+
+    <div class="signup-card shadow-sm">
+    
+    <style>
+    .signup-card {
+    max-width: 700px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    padding: 30px 40px;
+    border-radius: 10px;
+}
+
+/* 주황색 버튼 */
+.btn-orange {
+    background-color: #FF7732 !important;
+    color: white !important;
+    border: none !important;
+}
+
+.btn-orange:hover {
+    background-color: #e6651f !important;
+}
+
+/* 주소찾기 버튼 (outline 주황) */
+.btn-outline-orange {
+    border: 1px solid #FF7732 !important;
+    color: #FF7732 !important;
+    background: white !important;
+}
+
+.btn-outline-orange:hover {
+    background: #FF7732 !important;
+    color: white !important;
+}
+    
+    </style>
+
+        <!-- 회원가입 제목 -->
+        <h2 class="text-center mb-4">회원가입</h2>
+
+        <hr>
+
+        <form th:action="@{/user/signup}" th:object="${userCreateForm}" method="post" enctype="multipart/form-data">
+
+            <!-- 필수입력사항 -->
+            <div class="text-end mb-3">
+                <span class="css-pointer">*</span> 필수입력사항
+            </div>
+
+            <table class="table table-borderless">
+                <tbody>
+
+                    <!-- 아이디 -->
+                    <tr>
+                        <td class="text-nowrap"><label for="username" class="form-label">아이디<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="text" name="username" th:field="*{username}"
+                                   class="form-control text-center" placeholder="아이디를 입력하십시오."
+                                   oninput="checkUsername()">
+                            <span id="username-check"></span>
+                            <div class="css-pointer" th:errors="*{username}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 비밀번호 -->
+                    <tr>
+                        <td><label for="password1" class="form-label">비밀번호<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="password" name="password1" th:field="*{password1}"
+                                   class="form-control text-center" placeholder="비밀번호를 입력하십시오.">
+                            <div class="css-pointer" th:errors="*{password1}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 비밀번호 확인 -->
+                    <tr>
+                        <td><label for="password2" class="form-label">비밀번호 확인<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="password" name="password2" th:field="*{password2}"
+                                   class="form-control text-center" placeholder="비밀번호 확인을 입력하십시오.">
+                            <div class="css-pointer" th:errors="*{password2}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 이메일 -->
+                    <tr>
+                        <td><label for="email" class="form-label">이메일<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="email" th:field="*{email}"
+                                   class="form-control text-center" placeholder="이메일을 입력하십시오."
+                                   oninput="checkEmail()">
+                            <span id="email-check"></span>
+                            <div class="css-pointer" th:errors="*{email}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 이름 -->
+                    <tr>
+                        <td><label for="name" class="form-label">이름<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="text" th:field="*{name}"
+                                   class="form-control text-center" placeholder="이름을 입력하십시오.">
+                            <div class="css-pointer" th:errors="*{name}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 핸드폰 번호 -->
+                    <tr>
+                        <td><label for="mobile" class="form-label">핸드폰번호<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="text" th:field="*{mobile}"
+                                   class="form-control text-center" placeholder="핸드폰 번호를 입력하십시오."
+                                   oninput="checkMobile()">
+                            <span id="mobile-check"></span>
+                            <div class="css-pointer" th:errors="*{mobile}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 우편번호 -->
+                 <tr>
+                  <td><label for="zip" class="form-label">우편번호<span
+                        class="css-pointer">*</span></label></td>
+                  <td><input type="text" name="zip" th:field="*{zip}"
+                     class="form-control text-center" placeholder="우편번호를 입력하십시오."></td>
+                  <td><button type="button" class="btn btn-warning"
+                        id="address_search_btn" onclick="getPostcodeAddress()">주소찾기</button></td>
+               </tr>
+
+                    <!-- 주소 -->
+                    <tr>
+                        <td><label for="address1" class="form-label">주소<span class="css-pointer">*</span></label></td>
+                        <td>
+                            <input type="text" th:field="*{address1}"
+                                   class="form-control text-center" placeholder="주소를 입력하십시오.">
+                            <div class="css-pointer" th:errors="*{address1}"></div>
+                        </td>
+                    </tr>
+
+                    <!-- 상세 주소 -->
+                    <tr>
+                        <td><label for="address2" class="form-label">상세주소</label></td>
+                        <td>
+                            <input type="text" th:field="*{address2}"
+                                   class="form-control text-center" placeholder="상세주소를 입력하십시오.">
+                        </td>
+                    </tr>
+
+                    <!-- 저장 버튼 -->
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button type="submit" class="btn btn-orange w-100 mt-3">저장하기</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </form>
+
+    </div>
+<script th:src="@{/js/signup_script.js}"></script>
+</div>
+
+</html>

@@ -18,21 +18,21 @@ import lombok.Data;
 public class UserCreateForm {
 	
 	/** 아이디 */
-	@Pattern(regexp="[a-zA-Z]{1}\\w{5,19}",
-			 message="비밀번호는 영문을 포함한 6~20자로 입력하십시오.")
+	@Pattern(regexp="[a-zA-Z]{1}\\w{3,19}",
+			 message="비밀번호는 영문을 포함한 4~20자로 입력하십시오.")
 	@NotEmpty(message="아이디는 필수사항입니다.")
 	private String username;
 	
 	/**비밀번호 */
-	@Pattern(regexp="(?=.*\\d)(?=.*[a-zA-Z])(?=.*\\W).{8,20}",
-			 message="비밀번호는 8~20사이의 영문 대소/특수문자를 최소 1자 이상씩  입력하십시오.")
+	@Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d).{6,20}$",
+	         message="비밀번호는 6~20자, 영문과 숫자를 최소 1자 이상 포함해야 합니다.")
 	@NotEmpty(message="비밀번호는 필수사항입니다.")
 	private String password1;
 	
 	/** 비밀번호 확인 */
-	@Pattern(regexp="(?=.*\\d)(?=.*[a-zA-Z])(?=.*\\W).{8,20}",
-		   	message="비밀번호는 8~20사이의 영문 대소/특수문자를 최소 1자 이상씩  입력하십시오.")
-	@NotEmpty(message="비밀번호 확인은 필수사항입니다.")
+	@Pattern(regexp="^(?=.*[A-Za-z])(?=.*\\d).{6,20}$",
+	         message="비밀번호는 6~20자, 영문과 숫자를 최소 1자 이상 포함해야 합니다.")
+	@NotEmpty(message="비밀번호는 필수사항입니다.")
 	private String password2;
 	
 	/** 이메일 */
@@ -45,18 +45,6 @@ public class UserCreateForm {
 			message="회원 이름은 한글만 허용됩니다.")
 	@NotEmpty(message="이름은 필수사항입니다.")
 	private String name;
-	
-	/** 닉네임 */
-	@Pattern(regexp="^[a-zA-Z0-9가-힣]{2,10}$",
-			message="닉네임은 특수문자를 제외한 2~10자로 입력하십시오.")
-	@NotEmpty(message="닉네임은 필수사항입니다.")
-	private String nickname;
-	
-//	/** 성별 */
-//	@Pattern(regexp="[f, m]{1}",
-//			message="회원 성별을 입력하십시오.")
-//	@NotEmpty(message="성별은 필수사항입니다.")
-//	private String gender;
 	
 	/** 휴대폰 번호 */
 	@Pattern(regexp="010-\\d{4}-\\d{4}",
@@ -75,19 +63,7 @@ public class UserCreateForm {
 	/** 상세주소 */
 	private String address2;
 	
-//	/** 생년월일*/
-//	@Past(message="생일은 금일 기준 이전 일이 들어가야 합니다.")
-//	@DateTimeFormat(pattern="yyyy-MM-dd")
-//	@Temporal(TemporalType.DATE)
-//	private Date birthday;
-	
 	/** 가입일 */
 	private Date joindate;
-	
-//	/** 등급 */
-//	private String grade;
-	
-	/** 프로필사진 */
-	private MultipartFile profile;
 	
 }

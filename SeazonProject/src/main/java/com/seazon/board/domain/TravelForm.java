@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.Data;
 
 @Data
-public class SignUpForm {
+public class TravelForm {
 
 	@NotEmpty(message="제목은 필수항목입니다.")
 	@Size(max=200)
@@ -23,22 +23,22 @@ public class SignUpForm {
 	private MultipartFile file;
 	
 	@NotEmpty(message="내용은 필수항목입니다.")
-	private String cookIntro;     // 요리소개(간단히 요리를 소개합니다.)
+	private String travelIntro;     // 요리소개(간단히 요리를 소개합니다.)
 	
     private String category;     // 카테고리
 	
-    private String cookInfo_level;     // 요리 정보(인원)
+    private String travelInfo_level;     // 요리 정보(인원)
 
-	private String cookInfo_people;     // 요리 정보(시간)
+	private String travelInfo_people;     // 요리 정보(시간)
 
-	private String cookInfo_time;     // 요리 정보(난이도)
+	private String travelInfo_time;     // 요리 정보(난이도)
 	
     private String ingredient;        // 요리 재료
 	
 	private String capacity;         // 재료 용량
 	
-    private String content;         // 레시피 내용
+    private String content;         // 여행 내용
 	
-	private MultipartFile contentFile;      // 레시피 이미지
+	private MultipartFile contentFile;      // 여행 이미지
 	
 }

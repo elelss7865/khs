@@ -50,26 +50,26 @@
 		<div class="container mt-3">
 			<!-- 첫번째 줄 -->
 			<table class="table table-borderless">
-				<a href="/signUp/list" style="color: green; font-size: 2.0em; text-decoration: none;">
+				<a href="/travel/list" style="color: green; font-size: 2.0em; text-decoration: none;">
 				이번주 축제</a>
 				<tr>
-					<th th:each="signUp, loop : ${paging1}">
+					<th th:each="travel, loop : ${paging1}">
 						<div class="card" style="width: 15rem;">
-							<img th:src="${signUp.filePath}"
+							<img th:src="${travel.filePath}"
 								style="width: 239px; height: 200px;" class="card-img-top" alt="...">
 							<div class="card-body">
 								<h5 class="card-title">
 									<img th:src="${siteUsers1.get(loop.index).profilePath}"
 										class="rounded-circle" width="35px" height="35px"> 
-									<span th:if="${signUp.author != null}"
-										th:text="${signUp.author.nickname}"></span>
+									<span th:if="${travel.author != null}"
+										th:text="${travel.author.nickname}"></span>
 								</h5>
 
 								<div class="card-text">
-									<a th:href="@{|/signUp/detail/${signUp.id}|}"
-									   th:text="${signUp.subject}"></a>
+									<a th:href="@{|/travel/detail/${travel.id}|}"
+									   th:text="${travel.subject}"></a>
 								</div>
-								추천수 : <span th:text="${#sets.size(signUp.voter)}"></span>
+								추천수 : <span th:text="${#sets.size(travel.voter)}"></span>
 							</div>
 						</div>
 					</th>

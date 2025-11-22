@@ -1,11 +1,11 @@
 <style>
-.css-signup-form {
+.css-travel-form {
 	min-width: 1050px;
 	margin-top: 50px;
 	margin-bottom: 60px;
 }
 
-.css-signup-main {
+.css-travel-main {
 	margin-bottom: 50px;
 	font-size: 28px;
 	line-height: 35px;
@@ -14,12 +14,12 @@
 	letter-spacing: -1px;
 }
 
-.css-signup-basic {
+.css-travel-basic {
 	width: 650px;
 	margin: 0px auto;
 }
 
-.css-signup-line {
+.css-travel-line {
 	padding-bottom: 10px;
 	border-bottom: 2px solid rgb(51, 51, 51);
 	font-size: 12px;
