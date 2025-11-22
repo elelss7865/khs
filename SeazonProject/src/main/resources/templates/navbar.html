@@ -1,3 +1,6 @@
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <nav th:fragment="navbarFragment"
      class="navbar navbar-expand-lg custom-navbar">
   <div class="container-fluid">
@@ -23,17 +26,26 @@
         </li>
       </ul>
 
-    <form class="d-flex ms-auto me-4" role="search">
-  <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-  <button class="btn btn-outline-success" type="submit">Search</button>
-</form>
-      
-        <div class="d-flex ms-auto">
+      <!-- 검색창 -->
+      <form class="d-flex ms-auto me-4" role="search">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+
+      <!-- 로그인하지 않은 상태 -->
+      <div class="d-flex ms-auto" sec:authorize="isAnonymous()">
         <a href="/user/login" class="btn btn-light me-2">로그인</a>
         <a href="/user/signup" class="btn btn-outline-light">회원가입</a>
       </div>
-</div>
+
+      <!-- 로그인한 상태 -->
+      <div class="d-flex ms-auto align-items-center" sec:authorize="isAuthenticated()">
+        <span class="text-white me-3">
+          <b sec:authentication="name"></b>님
+        </span>
+        <a href="/user/logout" class="btn btn-outline-light">로그아웃</a>
+      </div>
 
     </div>
-
+  </div>
 </nav>

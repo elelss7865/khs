@@ -35,6 +35,25 @@
     background: #FF7732 !important;
     color: white !important;
 }
+
+.zip-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.zip-wrapper input {
+    padding-right: 90px; /* 버튼 공간 확보 */
+}
+
+.zip-btn {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 32px;
+    padding: 0 10px;
+    font-size: 13px;
+}
     
     </style>
 
@@ -120,14 +139,17 @@
                     </tr>
 
                     <!-- 우편번호 -->
-                 <tr>
-                  <td><label for="zip" class="form-label">우편번호<span
-                        class="css-pointer">*</span></label></td>
-                  <td><input type="text" name="zip" th:field="*{zip}"
-                     class="form-control text-center" placeholder="우편번호를 입력하십시오."></td>
-                  <td><button type="button" class="btn btn-warning"
-                        id="address_search_btn" onclick="getPostcodeAddress()">주소찾기</button></td>
-               </tr>
+              <tr>
+    <td><label for="zip" class="form-label">우편번호<span class="css-pointer">*</span></label></td>
+    <td>
+        <div class="zip-wrapper">
+            <input type="text" name="zip" id="zip" th:field="*{zip}"
+                   class="form-control text-center" placeholder="우편번호를 입력하십시오.">
+            <button type="button" class="btn btn-outline-orange zip-btn"
+                    onclick="getPostcodeAddress()">주소찾기</button>
+        </div>
+    </td>
+</tr>
 
                     <!-- 주소 -->
                     <tr>

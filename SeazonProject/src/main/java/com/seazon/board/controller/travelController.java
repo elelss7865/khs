@@ -90,7 +90,12 @@ public class travelController {
             return "travel_form";
             
         }
-        SiteUser siteUser = this.userService.getUser(principal.getName());
+//        SiteUser siteUser = this.userService.getUser("관리자");
+        String loginId = principal.getName(); // 관리자
+
+     // name → username 매핑
+     SiteUser siteUser = userRepository.findByusername(loginId)
+    	        .orElseThrow();
         this.travelService.create(travelForm.getSubject(), siteUser, travelForm.getFile(),
         		travelForm.getTravelIntro(), travelForm.getCategory(), travelForm.getTravelInfo_level(), 
         		travelForm.getTravelInfo_people(), travelForm.getTravelInfo_time(), travelForm.getIngredient(),

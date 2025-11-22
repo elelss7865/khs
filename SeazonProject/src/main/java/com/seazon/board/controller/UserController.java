@@ -64,7 +64,13 @@ public class UserController {
 	            return "signup_form";
 	        }
 
-	        return "redirect:/";
+	        return "redirect:/user/signup-success";
+	    }
+	 
+	    // 회원가입 성공했을때
+	    @GetMapping("/signup-success")
+	    public String signupSuccess() {
+	        return "signup_success";
 	    }
 
 	    // 로그인 버튼 
@@ -113,5 +119,6 @@ public class UserController {
 	            return ResponseEntity.ok().body(true); // 사용 가능한 경우 true를 반환
 	        }
 	    }
+	    
 }
 
