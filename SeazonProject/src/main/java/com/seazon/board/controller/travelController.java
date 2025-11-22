@@ -61,7 +61,7 @@ public class travelController {
 		return "travel_list";
 		}
 		
-	// 여행 추가
+	// 축제 추가
 	@GetMapping(value = "/detail/{id}")
 	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
 	    Travel travel = travelService.getTravel(id);
@@ -81,7 +81,7 @@ public class travelController {
         return "travel_form";
     }
     
-    // 여행 작성
+    // 축제 작성
 //    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
     public String travelCreate(@Valid TravelForm travelForm,
@@ -97,9 +97,10 @@ public class travelController {
      SiteUser siteUser = userRepository.findByusername(loginId)
     	        .orElseThrow();
         this.travelService.create(travelForm.getSubject(), siteUser, travelForm.getFile(),
-        		travelForm.getTravelIntro(), travelForm.getCategory(), travelForm.getTravelInfo_level(), 
-        		travelForm.getTravelInfo_people(), travelForm.getTravelInfo_time(), travelForm.getIngredient(),
-        		travelForm.getCapacity(), travelForm.getContent(), travelForm.getContentFile());
+        		travelForm.getTravelIntro(), travelForm.getCategory(), travelForm.getTravelInfo_day(), 
+        		travelForm.getTravelInfo_place(), travelForm.getTravelInfo_pay(),
+        		travelForm.getContent(),travelForm.getTravelInfo_phone(),travelForm.getTravelInfo_organizer(),
+        		travelForm.getTravelInfo_homepage());
         log.info("로그(질문작성):" + travelForm);
         return "redirect:/travel/list";
     }
@@ -116,9 +117,9 @@ public class travelController {
     	travelForm.setSubject(travel.getSubject());
     	travelForm.setTravelIntro(travel.getTravelIntro());
     	travelForm.setCategory(travel.getCategory());
-    	travelForm.setTravelInfo_people(travel.getTravelInfo_level());
-    	travelForm.setTravelInfo_time(travel.getTravelInfo_people());
-    	travelForm.setTravelInfo_level(travel.getTravelInfo_time());
+    	travelForm.setTravelInfo_place(travel.getTravelInfo_day());
+    	travelForm.setTravelInfo_pay(travel.getTravelInfo_place());
+    	travelForm.setTravelInfo_day(travel.getTravelInfo_pay());
     	travelForm.setFile(file);
     	return "travel_form";
     }
@@ -136,8 +137,8 @@ public class travelController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
         this.travelService.modify(travel, travelForm.getSubject(), travelForm.getFile(),
-        		travelForm.getTravelIntro(),travelForm.getCategory(),travelForm.getTravelInfo_level(),
-        		travelForm.getTravelInfo_people(),travelForm.getTravelInfo_time());
+        		travelForm.getTravelIntro(),travelForm.getCategory(),travelForm.getTravelInfo_day(),
+        		travelForm.getTravelInfo_place(),travelForm.getTravelInfo_pay());
         return String.format("redirect:/travel/detail/%s", id);
     }
     

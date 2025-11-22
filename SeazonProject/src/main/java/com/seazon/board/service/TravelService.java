@@ -86,16 +86,16 @@ public class TravelService {
          }
       }
       
-      // 여행 저장 기능
-      public void create(String subject, SiteUser user, MultipartFile file, String travelIntro, String category,
-              String travelInfo_level, String travelInfo_people, String travelInfo_time, String ingredient, String capacity,
-              String content, MultipartFile contentFile) throws Exception {
+      // 축제 저장 기능
+      public void create(String subject,SiteUser user,MultipartFile file,String travelIntro,
+    	        String category,String travelInfo_day,String travelInfo_place,String travelInfo_pay,
+    	        String content,String travelInfo_phone,String travelInfo_organizer,String travelInfo_homepage) throws Exception {
     	  
-		// Check if the parameters are null or empty
-		if (file == null || contentFile == null) {
-		   throw new IllegalArgumentException("File parameters cannot be null");
-		}
-		
+//		// Check if the parameters are null or empty
+//		if (file == null || contentFile == null) {
+//		   throw new IllegalArgumentException("File parameters cannot be null");
+//		}
+//		
 		// 썸네일 저장
 		String projectPath = "D:\\kim\\boot\\files";
 		UUID uuid = UUID.randomUUID();
@@ -103,10 +103,10 @@ public class TravelService {
 		File saveFile = new File(projectPath, fileName);
 		file.transferTo(saveFile);
 		
-		// 여행 순서 이미지 저장
-		String contentFileName = uuid + "_" + contentFile.getOriginalFilename();
-		File contentSaveFile = new File(projectPath + "/contents", contentFileName);
-		contentFile.transferTo(contentSaveFile);
+//		// 축제 순서 이미지 저장
+//		String contentFileName = uuid + "_" + contentFile.getOriginalFilename();
+//		File contentSaveFile = new File(projectPath + "/contents", contentFileName);
+//		contentFile.transferTo(contentSaveFile);
 		
 	     Travel r = new Travel();
 	     
@@ -118,14 +118,15 @@ public class TravelService {
 	     r.setCreateDate(LocalDateTime.now());
 	     r.setTravelIntro(travelIntro);
 	     r.setCategory(category);
-	     r.setTravelInfo(travelInfo_level + travelInfo_people + travelInfo_time);
-	     r.setTravelInfo_level(travelInfo_level);
-	     r.setTravelInfo_people(travelInfo_people);
-	     r.setTravelInfo_time(travelInfo_time);
-	     r.setIngredient(ingredient);
-	     r.setCapacity(capacity);
+	     r.setTravelInfo(travelInfo_day + travelInfo_place + travelInfo_pay);
+	     r.setTravelInfo_day(travelInfo_day);
+	     r.setTravelInfo_place(travelInfo_place);
+	     r.setTravelInfo_pay(travelInfo_pay);
+	     r.setTravelInfo_phone(travelInfo_phone);
+	     r.setTravelInfo_organizer(travelInfo_organizer);
+	     r.setTravelInfo_homepage(travelInfo_homepage);
 	     r.setContent(content);
-	     r.setContentFilePath("/files/contents/" + contentFileName);
+//	     r.setContentFilePath("/files/contents/" + contentFileName);
 	     r.setAuthor(user);
 	           
 	       this.travelRepository.save(r);
@@ -207,7 +208,7 @@ public class TravelService {
       
       // 질문 수정 기능
       public void modify(Travel travel, String subject, MultipartFile file, String travelIntro, String category,
-  			String travelInfo_level, String travelInfo_people, String travelInfo_time) throws Exception{
+  			String travelInfo_day, String travelInfo_place, String travelInfo_pay) throws Exception{
          String projectPath = "D:\\kim\\boot\\files";
            UUID uuid = UUID.randomUUID();
            String fileName = uuid + "_" + file.getOriginalFilename();
@@ -220,10 +221,10 @@ public class TravelService {
 //    	   travel.setContent(content);
     	   travel.setTravelIntro(travelIntro);
     	   travel.setCategory(category);
-    	   travel.setTravelInfo(travelInfo_level + travelInfo_people + travelInfo_time);
-    	   travel.setTravelInfo_level(travelInfo_level);
-    	   travel.setTravelInfo_people(travelInfo_people);
-    	   travel.setTravelInfo_time(travelInfo_time);
+    	   travel.setTravelInfo(travelInfo_day + travelInfo_place + travelInfo_pay);
+    	   travel.setTravelInfo_day(travelInfo_day);
+    	   travel.setTravelInfo_place(travelInfo_place);
+    	   travel.setTravelInfo_pay(travelInfo_pay);
     	   travel.setModifyDate(LocalDateTime.now());
 
     	   this.travelRepository.save(travel);
@@ -240,13 +241,13 @@ public class TravelService {
          this.travelRepository.save(travel);
       }
       
-      // 추천여행
+      // 추천축제
       @Transactional
       public void incrementViewCount(int id) {
           travelRepository.incrementViewCount(id);
       }
       
-      // 전체 여행 수
+      // 전체 축제 수
       public long getTotalCount() {
     	    return travelRepository.count();
       }

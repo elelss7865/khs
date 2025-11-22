@@ -26,23 +26,23 @@ public class Travel {
 	 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id; // 여행의 고유 번호 - 기본키(primary key)
+	private Integer id; // 축제의 고유 번호 - 기본키(primary key)
 	
 	@Column(length = 200)
-	private String subject;  // 여행 제목
+	private String subject;  // 축제 제목
 	
 	@Column(name = "content")
-	private String content;  // 여행 내용
+	private String content;  // 축제 내용
 	
-	private LocalDateTime createDate;  // 여행 최초 작성 일시
+	private LocalDateTime createDate;  // 축제 최초 작성 일시
 	
 	@OneToMany(mappedBy = "travel", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 	
 	@ManyToOne
-	private SiteUser author;  // 여행에 author 속성을 추가(엔티티 변경)
+	private SiteUser author;  // 축제에 author 속성을 추가(엔티티 변경)
 	
-	private LocalDateTime modifyDate;   // 여행 수정 일시
+	private LocalDateTime modifyDate;   // 축제 수정 일시
 	
 	@ManyToMany  // N:N
 	Set<SiteUser> voter;     // 추천인(voter) 속성 추가
@@ -55,22 +55,29 @@ public class Travel {
 	@Column(columnDefinition = "integer default 0", nullable = false)
 	private Integer view = 0; // 조회수
 
-	private String travelIntro;     // 요리소개(간단히 요리를 소개합니다.)	
+	private String travelIntro;     // 축제 정보	
 
-	private String travelInfo;      // 요리 정보(인원+시간+난이도)
+	private String travelInfo;      // 축제 내용
 	
 	private String category;      // 카테고리
     
-	private String travelInfo_level;     // 여행 정보(인원)
+	private String travelInfo_day;     // 축제 일정
 
-	private String travelInfo_people;     // 여행 정보(시간)
+	private String travelInfo_place;     // 축제 장소
 
-	private String travelInfo_time;     // 여행 정보(난이도)
+	private String travelInfo_pay;     // 축제 비용
 	
-    private String ingredient;         // 여행 재료
+	private String sns;
 	
-	private String capacity;           // 재료 량
+	// 축제 관련 전화번호
+	private String travelInfo_phone;    
 	
-	private String contentFilePath;    // 여행 이미지
+	// 축제 주최
+	private String travelInfo_organizer;     
+	
+	// 축제 공식홈페이지
+	private String travelInfo_homepage;  
+	
+	private String contentFilePath;    // 축제 이미지
 	
 }

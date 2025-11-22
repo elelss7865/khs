@@ -23,22 +23,34 @@ public class TravelForm {
 	private MultipartFile file;
 	
 	@NotEmpty(message="내용은 필수항목입니다.")
-	private String travelIntro;     // 요리소개(간단히 요리를 소개합니다.)
+	// 축제 소개
+	private String travelIntro;     
 	
-    private String category;     // 카테고리
+	// 카테고리
+    private String category;     
 	
-    private String travelInfo_level;     // 요리 정보(인원)
+ // 축제 일정
+    private String travelInfo_day;     
 
-	private String travelInfo_people;     // 요리 정보(시간)
+ // 축제 장소 
+	private String travelInfo_place;     
 
-	private String travelInfo_time;     // 요리 정보(난이도)
+	// 축제 비용
+	private String travelInfo_pay;     
 	
-    private String ingredient;        // 요리 재료
+	// 축제 관련 전화번호
+	private String travelInfo_phone;    
 	
-	private String capacity;         // 재료 용량
+	// 축제 주체자
+	private String travelInfo_organizer;     
 	
-    private String content;         // 여행 내용
+	// 축제 공식홈페이지
+	private String travelInfo_homepage;         
 	
-	private MultipartFile contentFile;      // 여행 이미지
+	 // 축제 내용
+    private String content;        
+	
+ // 축제 이미지
+	private MultipartFile contentFile;      
 	
 }

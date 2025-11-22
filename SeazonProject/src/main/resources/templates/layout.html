@@ -6,124 +6,83 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
 
-
 <style>
 .navbar.custom-navbar {
   height: 100px !important;
   padding-top: 20px !important;
   padding-bottom: 20px !important;
-
-  /* 상단은 깔끔한 오렌지 단색 */
   background: #FF7732 !important;
-
   position: relative;
-  overflow: hidden; /* 그라데이션이 외부로 튀어나가지 않게 */
+  overflow: hidden;
 }
-
-/* navbar 내부 아래쪽에만 접힌 음영 */
 .navbar.custom-navbar::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  /* ↓ 그라데이션 높이 */
+  left: 0; right: 0; bottom: 0;
   height: 18px;
-
-  /* ↓ 아래쪽만 회색 그림자 느낌 */
-  background: linear-gradient(
-    to bottom,
-    rgba(0,0,0,0) 0%,        /* 위쪽 = 투명 (안 보임) */
-    rgba(0,0,0,0.20) 100%    /* 아래로 갈수록 회색 */
-  );
+  background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.20) 100%);
   pointer-events: none;
 }
-
-/* 텍스트는 모두 흰색 */
 .navbar.custom-navbar .nav-link,
 .navbar.custom-navbar .navbar-brand {
   color: #fff !important;
   font-weight: 700 !important;
   margin-right: 20px !important;
 }
-
-/* Search 버튼 전체 흰색 스타일 */
 .navbar.custom-navbar .btn-outline-success {
-  color: #fff !important;              /* 글자 흰색 */
-  border-color: #fff !important;       /* 테두리 흰색 */
+  color: #fff !important;
+  border-color: #fff !important;
   background-color: transparent !important;
 }
-
-/* Hover 시 흰 배경 살짝 */
 .navbar.custom-navbar .btn-outline-success:hover {
   background-color: rgba(255,255,255,0.25) !important;
   color: #fff !important;
   border-color: #fff !important;
 }
-
-.custom-navbar {
-  display: flex;
-  align-items: center;
-}
-
-.search-box {
-  flex-shrink: 0;
-}
+.custom-navbar { display: flex; align-items: center; }
+.search-box { flex-shrink: 0; }
 </style>
 
-<!-- Required meta tags -->
 <meta charset="UTF-8">
-<meta name="viewport"
-	content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <!-- jquery -->
 <script th:src="@{/jquery/3.6.0/jquery.min.js}"></script>
 
 <!-- Bootstrap CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/bootstrap/5.1.0/css/bootstrap.min.css}">
+<link rel="stylesheet" th:href="@{/bootstrap/5.1.0/css/bootstrap.min.css}">
 
 <!-- Bootstrap JS -->
 <script th:src="@{/bootstrap/5.1.0/js/bootstrap.min.js}"></script>
 
-<!-- templates_style CSS -->
-<link rel="stylesheet" type="text/css"
-	th:href="@{/css/travel_style.css}">
-<link rel="stylesheet" type="text/css" th:href="@{/css/index_style.css}">
-<link rel="stylesheet" type="text/css"
-	th:href="@{/css/login_form_style.css}">
+<!-- CSS -->
+<link rel="stylesheet" th:href="@{/css/travel_style.css}">
+<link rel="stylesheet" th:href="@{/css/index_style.css}">
+<link rel="stylesheet" th:href="@{/css/login_form_style.css}">
 
-<!-- templates_script JS -->
+<!-- JS -->
 <script th:src="@{/js/travel_script.js}" charset="UTF-8"></script>
 
-<!-- 1단계 : daum 우편번호 서비스 외장 JS(Javascript) 파일 링크 -->
+<!-- 주소 API -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+<!-- 🔥 travel_form.html 등 각 화면 CSS 삽입용 -->
+<th:block layout:fragment="css"></th:block>
 
 <title>사계로</title>
 </head>
 
 <body>
-	<!-- 네비게이션바 -->
-	<!--<nav th:replace="~{navbar :: navbarFragment}"></nav>-->
-	<th:block th:replace="~{navbar :: navbarFragment}"></th:block>
 
-	<!-- 기본 템플릿 안에 삽입될 내용 Start -->
-	<th:block layout:fragment="content"></th:block>
-	<!-- 기본 템플릿 안에 삽입될 내용 End -->
+    <!-- 네비게이션 -->
+    <th:block th:replace="~{navbar :: navbarFragment}"></th:block>
+
+    <!-- 페이지 내용 삽입 -->
+    <th:block layout:fragment="content"></th:block>
+
+    <!-- 🔥 각 화면 JavaScript 삽입용 -->
+    <th:block layout:fragment="script"></th:block>
 
 </body>
-<div>
-	<!-- input 찾기 엔터키 -->
-	<script>
-		var input = document.getElementById("search_kw");
-		input.addEventListener("keyup", function(event) {
-			if (event.keyCode === 13) {
-				event.preventDefault();
-				document.getElementById("btn_search").click();
-			}
-		});
-	</script>
-</div>
 
 </html>

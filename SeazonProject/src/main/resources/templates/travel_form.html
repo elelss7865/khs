@@ -1,193 +1,216 @@
+<!DOCTYPE html>
 <html layout:decorate="~{layout}">
-<div layout:fragment="content" class="container">
 
-   <!-- 여행지 등록 -->
-   <h5 class="my-5 border-bottom pb-2">여행지 등록</h5>
-   
-   <form th:object="${travelForm}" method="post"
-      enctype="multipart/form-data">
-      <input type="hidden" th:name="${_csrf.parameterName}"
-         th:value="${_csrf.token}" />
-      <div th:replace="form_errors :: formErrorsFragment"></div>
+<!-- ============================= -->
+<!-- ✔ CSS 영역 (layout에 삽입됨) -->
+<!-- ============================= -->
+<th:block layout:fragment="css">
 
-      <!-- 여행지 등록 -->
-      <table class="table table-borderless" style="margin: 20px 0px 0px 0px;">
+    <!-- flatpickr 달력 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
-         <tbody>
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
 
-            <!-- 여행지 이름(subject) -->
+        .form-control, .form-select {
+            border-radius: 8px;
+            height: 45px;
+        }
+
+        /* 오렌지 테마 */
+        .btn-warning, .btn-secondary {
+            background-color: #FF7732 !important;
+            border-color: #FF7732 !important;
+            color: white !important;
+            font-weight: 600;
+        }
+
+        .btn-warning:hover,
+        .btn-secondary:hover {
+            opacity: 0.85;
+        }
+    </style>
+
+</th:block>
+
+
+
+<!-- ============================= -->
+<!-- ✔ 실제 화면 내용 -->
+<!-- ============================= -->
+<th:block layout:fragment="content">
+
+<div class="container my-5">
+
+    <h2 class="border-bottom pb-3">축제 등록</h2>
+
+    <form th:object="${travelForm}" method="post" enctype="multipart/form-data" class="mt-4">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <table class="table table-borderless">
+
+            <!-- 축제 이름 -->
             <tr>
-               <td></td>
-               <td><label for="subject" class="form-label">여행지 이름</label></td>
-               <td><input type="text" th:field="*{subject}" class="form-control"></td>
-                  
-            <!-- 사진 첨부 -->      
-               <td rowspan='3'><label for="file" class="for-label">사진</label>
-                  <input type="file" name="file" th:field="*{file}"onchange="setThumbnail(event);"/>
-                       <div id="image_container"></div>
-                    </td>
+                <td class="text-end align-middle" style="width:150px;">축제 이름*</td>
+                <td><input type="text" th:field="*{subject}" placeholder="축제 이름을 입력하세요" class="form-control"/></td>
             </tr>
 
-            <!-- 여행지 설명(travelIntro) -->
+            <!-- 축제 설명 -->
             <tr>
-               <td></td>
-               <td><label for="travelIntro" class="form-label">여행지 설명</label></td>
-               <td><textarea type="text" th:field="*{travelIntro}"
-                     class="form-control"></textarea></td>
+                <td class="text-end align-middle">축제 설명*</td>
+                <td><textarea th:field="*{travelIntro}" class="form-control" placeholder="축제 설명을 입력하세요"></textarea></td>
             </tr>
 
-            <!-- 카테고리(category) -->
+            <!-- 지역 / 카테고리 -->
             <tr>
-                <td></td>
-               <td><label for="category" class="form-label">카테고리</label></td>
-               <td><div style="display: inline-block;">
-                     <select class="form-select" aria-label="Default select example" th:field="*{category}">
-                        <option value="">지역별</option>
-                        <option value="밥요리">밥요리</option>
-                        <option value="국/탕">국/탕</option>
-                        <option value="찌개/전골">찌개/전골</option>
-                        <option value="밑반찬">밑반찬</option>
-                        <option value="김치장아찌">김치장아찌</option>
-                        <option value="면요리">면요리</option>
-                        <option value="샐러드">샐러드</option>
-                        <option value="간식/분식">간식/분식</option>
-                        <option value="베이킹">베이킹</option>
-                        <option value="디저트">디저트</option>
-                        <option value="기타">기타</option>
-                     </select>
-                  </div>
+                <td class="text-end align-middle">카테고리*</td>
+                <td>
+                    <div class="d-flex gap-2">
 
-                  <div style="display: inline-block;">
-                     <select class="form-select" aria-label="Default select example" th:field="*{category}">
-                        <option value="">상황별</option>
-                        <option value="손님상">손님상</option>
-                        <option value="아이반찬">아이반찬</option>
-                        <option value="도시락">도시락</option>
-                        <option value="야식/술안주">야식/술안주</option>
-                        <option value="명절요리">명절요리</option>
-                        <option value="기타">기타</option>
-                     </select>
-                  </div>
+                        <!-- 지역 -->
+                        <select class="form-select" th:field="*{category}">
+                           <option value="">지역 선택</option>
+                           <option value="서울">서울</option>
+                           <option value="경기도">경기도</option>
+                           <option value="인천">인천</option>
+                           <option value="대전">대전</option>
+                           <option value="세종특별자치시">세종특별자치시</option>
+                           <option value="대구">대구</option>
+                           <option value="광주">광주</option>
+                           <option value="부산">부산</option>
+                           <option value="울산">울산</option>
+                           <option value="강원특별자치도">강원특별자치도</option>
+                           <option value="충청남도">충청남도</option>
+                           <option value="충청북도">충청북도</option>
+                           <option value="경상북도">경상북도</option>
+                           <option value="경상남도">경상남도</option>
+                           <option value="전북특별자치도">전북특별자치도</option>
+                           <option value="전라도">전라도</option>
+                           <option value="제주특별자치도">제주특별자치도</option>
+                        </select>
 
-                  <div style="display: inline-block;">
-                     <select class="form-select" aria-label="Default select example" th:field="*{category}">
-                        <option value="">방법별</option>
-                        <option value="볶음요리">볶음요리</option>
-                        <option value="구이(고기/생선)">구이(고기/생선)</option>
-                        <option value="찜/조림">찜/조림</option>
-                        <option value="튀김">튀김</option>
-                        <option value="기타">기타</option>
-                     </select>
-                  </div></td>
+                        <!-- 카테고리 -->
+                        <select class="form-select" th:field="*{category}">
+                           <option value="">카테고리 선택</option>
+                           <option value="계절">계절</option>
+                           <option value="먹거리">먹거리</option>
+                           <option value="힐링">힐링</option>
+                           <option value="불꽃놀이">불꽃놀이</option>
+                           <option value="문화예술">문화예술</option>
+                           <option value="체험">체험</option>
+                        </select>
+
+                    </div>
+                </td>
             </tr>
-      
-      <hr style="border:solid 5px gray;">
-      
-       <!-- 여행지 정보 -->
-       <table style="margin-left:150px">
-          <tbody id="content">
-              <tr class="form-label">
-                  <td><label for="step" class="form-label" style="margin-right:10px"></label></td>
-                  <td><input type="text" name="content" th:field="*{content}" style="width:350px; height:200px; margin-bottom:40px"></td>
-                  <td class="image-container">
-                      <img style="width:200px;" id="preview-image" src="https://dummyimage.com/200X200/ffffff/000000.gif&text=preview-image">
-                      <input style="display: block;" type="file" th:field="*{contentFile}" id="input-image" onchange="readImage(this)">
-                  </td>
-                  <td><input type="button" value="추가" class="btn btn-outline-warning btn-sm" onclick="add_contentbox()"></td>
-              </tr>
-          </tbody>
-      </table>
-        
-        <hr style="border:solid 5px gray;"> 
-        
-        <!-- 버튼 -->
-        <div class="d-flex justify-content-center">
-           <input type="submit" value="저장하기" class="btn btn-warning my-2 btn-lg">
-      </div>
-      
-   </form>
 
-   <script>
-       // 썸네일 미리보기
-      function setThumbnail(event) {
-         var reader = new FileReader();
+            <!-- 일정 -->
+            <tr>
+                <td class="text-end align-middle">축제 일정*</td>
+                <td>
+                    <input type="text" id="travelInfo_day" th:field="*{travelInfo_day}" 
+                           class="form-control" placeholder="예: 2025.05.01 ~ 2025.05.20">
+                </td>
+            </tr>
 
-         reader.onload = function(event) {
-            var img = document.createElement("img");
-            img.setAttribute("src", event.target.result);
-            img.style.width = "300px"; // 이미지 너비를 300px로 조정
-            img.style.height = "200px"; // 이미지 높이를 200px로 조정
-            document.querySelector("div#image_container").appendChild(img);
-         };
+            <!-- 축제 장소 -->
+            <tr>
+                <td class="text-end align-middle">축제 장소*</td>
+                <td>
+                    <div class="input-group">
+                        <input type="text" id="travelInfo_place" th:field="*{travelInfo_place}" 
+                               class="form-control" placeholder="주소를 입력하세요">
+                        <button type="button" class="btn btn-secondary" onclick="execDaumPostcode()">주소찾기</button>
+                    </div>
+                </td>
+            </tr>
+            
+               <!-- 비용 -->
+            <tr>
+                <td class="text-end align-middle">비용</td>
+                <td><input type="text" th:field="*{travelInfo_pay}" placeholder="참가비용 입력" class="form-control"/></td>
+            </tr>
 
-         reader.readAsDataURL(event.target.files[0]);
-      }
-      
-      // input box(ingredient)
-      const add_ingredientbox = () => {
-        const box = document.getElementById("ingredient");
-        const newP = document.createElement('p');
-        newP.innerHTML = `<input type='text' name='ingredient' style='width: 400px'> 
-                          <input type='text' name='capacity' style='width: 400px'> 
-                          <input type='button' value='삭제' class='btn btn-outline-warning btn-sm' onclick='removeIngredient(this)'>`;
-        box.appendChild(newP);
-       }
-       
-       const removeIngredient = (obj) => {
-           document.getElementById('ingredient').removeChild(obj.parentNode);
-       }   
-           
-        // input box(content)
-      let rowCount = 1;
-      
-        // 추가
-      const add_contentbox = () => {
-          const table = document.getElementById("content");
-          const newRow = document.createElement('tr');
-          newRow.innerHTML = `
-              <td><label for="step${rowCount}" class="form-label" style="margin-right:10px">STEP${rowCount}</label></td>
-              <td><input type="text" name="content" th:field="*{content}" style="width:350px; height:200px; margin-bottom:40px"></td>
-              <td class="image-container">
-                  <img style="width:200px;" id="preview-image-${rowCount}" src="https://dummyimage.com/200X200/ffffff/000000.gif&text=preview-image">
-                  <input style="display: block;" type="file" id="input-image-${rowCount}" onchange="readImage(this)">
-              </td>
-              <td><input type="button" value="삭제" class="btn btn-outline-warning btn-sm" onclick="removeContent(this)"></td>
-          `;
-          table.appendChild(newRow);
-          updateStepNumbers();
-          rowCount++;
-      }
-      
-      // 삭제
-      const removeContent = (obj) => {
-          const row = obj.parentNode.parentNode;
-          row.parentNode.removeChild(row);
-          updateStepNumbers();
-      }
-      
-      // label count
-      const updateStepNumbers = () => {
-          const rows = document.getElementById('content').getElementsByTagName('tr');
-          for (let i = 0; i < rows.length; i++) {
-              const label = rows[i].querySelector('label');
-              label.innerText = `STEP${i + 1}`;
-          }
-      }
-      
-      // 미리보기 이미지
-      function readImage(input) {
-          const previewImage = input.parentNode.querySelector('img');
-          if (input.files && input.files[0]) {
-              const reader = new FileReader();
-              reader.onload = e => {
-                  previewImage.src = e.target.result;
-              };
-              reader.readAsDataURL(input.files[0]);
-          } else {
-              previewImage.src = "https://dummyimage.com/200X200/ffffff/000000.gif&text=preview-image";
-          }
-      }
-        
-   </script>
+            <!-- 전화번호 -->
+            <tr>
+                <td class="text-end align-middle">전화번호</td>
+                <td><input type="text" th:field="*{travelInfo_phone}" placeholder="전화번호 입력" class="form-control"/></td>
+            </tr>
+
+            <!-- 주최측 -->
+            <tr>
+                <td class="text-end align-middle">주최측</td>
+                <td><input type="text" th:field="*{travelInfo_organizer}" placeholder="주최측 입력" class="form-control"/></td>
+            </tr>
+
+            <!-- 홈페이지 -->
+            <tr>
+                <td class="text-end align-middle">홈페이지</td>
+                <td><input type="text" th:field="*{travelInfo_homepage}" placeholder="홈페이지 주소 입력" class="form-control"/></td>
+            </tr>
+
+            <!-- 대표 이미지 -->
+            <tr>
+                <td class="text-end align-middle">대표 이미지*</td>
+                <td>
+                    <input type="file" th:field="*{file}" class="form-control" onchange="previewMain(event)" />
+                    <img id="mainPreview" style="width:300px; margin-top:10px; display:none;" />
+                </td>
+            </tr>
+
+        </table>
+
+        <div class="text-center mt-4">
+            <button class="btn btn-warning btn-lg">저장하기</button>
+        </div>
+
+    </form>
+
 </div>
+
+</th:block>
+
+
+
+<!-- ============================= -->
+<!-- ✔ JS 영역 (layout에 삽입됨) -->
+<!-- ============================= -->
+<th:block layout:fragment="script">
+
+<!-- 주소 API -->
+<script>
+function execDaumPostcode() {
+    new daum.Postcode({
+        oncomplete: function(data) {
+            document.getElementById("travelInfo_place").value = data.address;
+        }
+    }).open();
+}
+</script>
+
+<!-- 대표 이미지 미리보기 -->
+<script>
+function previewMain(event) {
+    const img = document.getElementById("mainPreview");
+    img.style.display = "block";
+    img.src = URL.createObjectURL(event.target.files[0]);
+}
+</script>
+
+<!-- flatpickr 달력 -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
+
+<script>
+flatpickr("#travelInfo_day", {
+    mode: "range",
+    dateFormat: "Y.m.d",
+    locale: "ko",
+});
+</script>
+
+</th:block>
+
 </html>

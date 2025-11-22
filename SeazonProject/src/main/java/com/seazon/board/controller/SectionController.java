@@ -37,9 +37,9 @@ public class SectionController {
 	    long totalCount = this.travelService.getTotalCount();
 	    
 	    model.addAttribute("siteUsers3", siteUsers3);    
-	    model.addAttribute("paging3", paging3);   // 전체 여행 리스트
+	    model.addAttribute("paging3", paging3);   // 전체 축제 리스트
 	    model.addAttribute("kw", kw);  // keyword
-	    model.addAttribute("totalCount", totalCount);  // 총 여행
+	    model.addAttribute("totalCount", totalCount);  // 총 축제
 	    
 	    return "section";
 	}
