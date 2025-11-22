@@ -1,6 +1,68 @@
 <!doctype html>
 <html lang="ko">
 <head>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+
+
+<style>
+.navbar.custom-navbar {
+  height: 100px !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+
+  /* 상단은 깔끔한 오렌지 단색 */
+  background: #FF7732 !important;
+
+  position: relative;
+  overflow: hidden; /* 그라데이션이 외부로 튀어나가지 않게 */
+}
+
+/* navbar 내부 아래쪽에만 접힌 음영 */
+.navbar.custom-navbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  /* ↓ 그라데이션 높이 */
+  height: 18px;
+
+  /* ↓ 아래쪽만 회색 그림자 느낌 */
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0%,        /* 위쪽 = 투명 (안 보임) */
+    rgba(0,0,0,0.20) 100%    /* 아래로 갈수록 회색 */
+  );
+  pointer-events: none;
+}
+
+/* 텍스트는 모두 흰색 */
+.navbar.custom-navbar .nav-link,
+.navbar.custom-navbar .navbar-brand {
+  color: #fff !important;
+  font-weight: 700 !important;
+  margin-right: 20px !important;
+}
+
+/* Search 버튼 전체 흰색 스타일 */
+.navbar.custom-navbar .btn-outline-success {
+  color: #fff !important;              /* 글자 흰색 */
+  border-color: #fff !important;       /* 테두리 흰색 */
+  background-color: transparent !important;
+}
+
+/* Hover 시 흰 배경 살짝 */
+.navbar.custom-navbar .btn-outline-success:hover {
+  background-color: rgba(255,255,255,0.25) !important;
+  color: #fff !important;
+  border-color: #fff !important;
+}
+</style>
+
 <!-- Required meta tags -->
 <meta charset="UTF-8">
 <meta name="viewport"
@@ -35,7 +97,8 @@
 
 <body>
 	<!-- 네비게이션바 -->
-	<nav th:replace="~{navbar :: navbarFragment}"></nav>
+	<!--<nav th:replace="~{navbar :: navbarFragment}"></nav>-->
+	<th:block th:replace="~{navbar :: navbarFragment}"></th:block>
 
 	<!-- 기본 템플릿 안에 삽입될 내용 Start -->
 	<th:block layout:fragment="content"></th:block>
