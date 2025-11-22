@@ -102,12 +102,12 @@ public class UserService {
     		return user;
     		}
     
-    public List<SiteUser> getUsers(Page<SignUp> sighUps) {
+    public List<SiteUser> getUsers(Page<SignUp> signUps) {
         List<SiteUser> users = new ArrayList<>();
-        List<SignUp> sighUpList = sighUps.toList();
-        for (int i = 0; i < sighUpList.size(); i++) {
-            SignUp sighUp = sighUpList.get(i);
-            SiteUser siteUser = userRepository.findById((long) (sighUp.getAuthor().getId())).get();
+        List<SignUp> signUpList = signUps.toList();
+        for (int i = 0; i < signUpList.size(); i++) {
+            SignUp signUp = signUpList.get(i);
+            SiteUser siteUser = userRepository.findById((long) (signUp.getAuthor().getId())).get();
             users.add(siteUser);
         }
         return users;

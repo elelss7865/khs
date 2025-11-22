@@ -37,7 +37,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class SignUpService {
 
-   private final SignUpRepository sighUpRepository;
+   private final SignUpRepository signUpRepository;
    
    // 검색 기능 (검색값 : kw)
       // Specification => 여러 테이블에서 데이터를 검색해야 할 경우에 JPA가 제공하는 인터페이스
@@ -48,14 +48,14 @@ public class SignUpService {
             @Override  
             public Predicate toPredicate(Root<SignUp> r, CriteriaQuery<?> query, CriteriaBuilder cb) {
             	
-                  // r : 기준을 의미하는 sighUp
+                  // r : 기준을 의미하는 signUp
                query.distinct(true);  // 중복을 제거
                
                Join<SignUp, SiteUser> u1 = r.join("author", JoinType.LEFT); 
-                   // u1 : sighUp엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
+                   // u1 : signUp엔티티와 SiteUser 엔티티를 아우터 조인 하여 만든 SiteUser 엔티티의 객체
                
                Join<SignUp, Answer> a = r.join("answerList", JoinType.LEFT);
-               // a : sighUp 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
+               // a : signUp 엔티티와 Answer 엔티티를 아우터 조인하여 만든 Answer 엔티티의 객체  
                
                Join<Answer, SiteUser> u2 = a.join("author", JoinType.LEFT);
                     // u2 : a 와 다시한번 SiteUser 엔티티와 아우터 조인하여 SiteUser 엔티티의 객체(답변 작성자를 검색하기 위해서 필요)
@@ -74,15 +74,15 @@ public class SignUpService {
       
       // 모든 엔티티 검색
       public List<SignUp> getList() {
-         return this.sighUpRepository.findAll();
+         return this.signUpRepository.findAll();
       }
       
-      public SignUp getsighUp(Integer id) {
-         Optional<SignUp> sighUp = this.sighUpRepository.findById(id);
-         if (sighUp.isPresent()) {
-            return sighUp.get();
+      public SignUp getsignUp(Integer id) {
+         Optional<SignUp> signUp = this.signUpRepository.findById(id);
+         if (signUp.isPresent()) {
+            return signUp.get();
          } else {
-            throw new DataNotFoundException("sighUp not found");
+            throw new DataNotFoundException("signUp not found");
          }
       }
       
@@ -111,7 +111,7 @@ public class SignUpService {
 	     SignUp r = new SignUp();
 	     
 	     // String projectPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
-	     SignUp sighUp = new SignUp();
+	     SignUp signUp = new SignUp();
 	     r.setFileName(fileName);
 	     r.setFilePath("/files/" + fileName);
 	     r.setSubject(subject);
@@ -128,7 +128,7 @@ public class SignUpService {
 	     r.setContentFilePath("/files/contents/" + contentFileName);
 	     r.setAuthor(user);
 	           
-	       this.sighUpRepository.save(r);
+	       this.signUpRepository.save(r);
 	       
 	       log.info("로그create" + r);
       }
@@ -140,7 +140,7 @@ public class SignUpService {
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
          Specification<SignUp> spec = search(kw);
-         return this.sighUpRepository.findAll(spec, pageable);
+         return this.signUpRepository.findAll(spec, pageable);
       }
       
       // 최근 게시물
@@ -149,7 +149,7 @@ public class SignUpService {
          sorts.add(Sort.Order.desc("createDate"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
          Specification<SignUp> spec = search(kw);
-         return this.sighUpRepository.findAll(spec, pageable);
+         return this.signUpRepository.findAll(spec, pageable);
       }
       
       // 조회수 많은 게시물
@@ -158,7 +158,7 @@ public class SignUpService {
          sorts.add(Sort.Order.desc("view"));
          Pageable pageable = PageRequest.of(page, 4, Sort.by(sorts));
          Specification<SignUp> spec = search(kw);
-         return this.sighUpRepository.findAll(spec, pageable);
+         return this.signUpRepository.findAll(spec, pageable);
       }
       
      // 모든 게시물(section)
@@ -170,11 +170,11 @@ public class SignUpService {
           Pageable pageable = PageRequest.of(page, pageSize, Sort.by(sorts));
           Specification<SignUp> spec = search(kw);
 
-          return this.sighUpRepository.findAll(spec, pageable);
+          return this.signUpRepository.findAll(spec, pageable);
       }
       
       // 모든 게시물(section)
-//      public Page<sighUp> getAllList(int page, String kw) {
+//      public Page<signUp> getAllList(int page, String kw) {
 //  	    List<Sort.Order> sorts = new ArrayList<>();
 //  	    sorts.add(Sort.Order.desc("createDate"));
 //  	    int pageSize = 20; 
@@ -186,15 +186,15 @@ public class SignUpService {
 //  	    int adjustedPage = page % totalItemsPerPage;
 //
 //  	    Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(sorts)); // Fetch all items
-//  	    Specification<sighUp> spec = search(kw);
+//  	    Specification<signUp> spec = search(kw);
 //
-//  	    Page<sighUp> result = this.sighUpRepository.findAll(spec, pageable);
-//  	    List<sighUp> content = result.getContent();
+//  	    Page<signUp> result = this.signUpRepository.findAll(spec, pageable);
+//  	    List<signUp> content = result.getContent();
 //
 //  	    int start = offset >= content.size() ? content.size() : offset;
 //  	    int end = Math.min(start + totalItemsPerPage, content.size());
 //
-//  	    List<sighUp> contentForPage = new ArrayList<>();
+//  	    List<signUp> contentForPage = new ArrayList<>();
 //  	    for (int i = start; i < end; i++) {
 //  	        contentForPage.add(content.get(i));
 //  	    }
@@ -206,7 +206,7 @@ public class SignUpService {
 //  	}
       
       // 질문 수정 기능
-      public void modify(SignUp sighUp, String subject, MultipartFile file, String cookIntro, String category,
+      public void modify(SignUp signUp, String subject, MultipartFile file, String cookIntro, String category,
   			String cookInfo_level, String cookInfo_people, String cookInfo_time) throws Exception{
          String projectPath = "D:\\kim\\boot\\files";
            UUID uuid = UUID.randomUUID();
@@ -214,41 +214,41 @@ public class SignUpService {
            String filePath = "/files/" + fileName;
            File saveFile = new File(projectPath, fileName);
            file.transferTo(saveFile);
-           sighUp.setFileName(fileName);
-           sighUp.setFilePath(filePath);
-           sighUp.setSubject(subject);
-//    	   sighUp.setContent(content);
-    	   sighUp.setCookIntro(cookIntro);
-    	   sighUp.setCategory(category);
-    	   sighUp.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
-    	   sighUp.setCookInfo_level(cookInfo_level);
-    	   sighUp.setCookInfo_people(cookInfo_people);
-    	   sighUp.setCookInfo_time(cookInfo_time);
-    	   sighUp.setModifyDate(LocalDateTime.now());
+           signUp.setFileName(fileName);
+           signUp.setFilePath(filePath);
+           signUp.setSubject(subject);
+//    	   signUp.setContent(content);
+    	   signUp.setCookIntro(cookIntro);
+    	   signUp.setCategory(category);
+    	   signUp.setCookInfo(cookInfo_level + cookInfo_people + cookInfo_time);
+    	   signUp.setCookInfo_level(cookInfo_level);
+    	   signUp.setCookInfo_people(cookInfo_people);
+    	   signUp.setCookInfo_time(cookInfo_time);
+    	   signUp.setModifyDate(LocalDateTime.now());
 
-    	   this.sighUpRepository.save(sighUp);
+    	   this.signUpRepository.save(signUp);
       }
       
       // 질문 삭제 기능
-      public void delete(SignUp sighUp) {
-         this.sighUpRepository.delete(sighUp);
+      public void delete(SignUp signUp) {
+         this.signUpRepository.delete(signUp);
       }
       
       // 추천
-      public void vote(SignUp sighUp, SiteUser siteuser) {
-         sighUp.getVoter().add(siteuser);
-         this.sighUpRepository.save(sighUp);
+      public void vote(SignUp signUp, SiteUser siteuser) {
+         signUp.getVoter().add(siteuser);
+         this.signUpRepository.save(signUp);
       }
       
       // 추천레시피
       @Transactional
       public void incrementViewCount(int id) {
-          sighUpRepository.incrementViewCount(id);
+          signUpRepository.incrementViewCount(id);
       }
       
       // 전체 레시피 수
       public long getTotalCount() {
-    	    return sighUpRepository.count();
+    	    return signUpRepository.count();
       }
 
 }

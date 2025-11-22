@@ -19,6 +19,6 @@ public interface SignUpRepository extends JpaRepository<SignUp, Integer> {
 	Page<SignUp> findAll(Specification<SignUp> spec, Pageable pageable);  // 검색기능
 	
 	@Modifying
-	@Query("UPDATE sighUp q SET q.view = q.view + 1 WHERE q.id = :id")
+	@Query("UPDATE SignUp q SET q.view = q.view + 1 WHERE q.id = :id")
 	void incrementViewCount(@Param("id") int id);                             // 추천레시피
 }

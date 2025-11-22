@@ -36,7 +36,7 @@ public class SignUp {
 	
 	private LocalDateTime createDate;  // 레시피 최초 작성 일시
 	
-	@OneToMany(mappedBy = "sighUp", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy = "signUp", cascade = CascadeType.REMOVE)
     private List<Answer> answerList;
 	
 	@ManyToOne

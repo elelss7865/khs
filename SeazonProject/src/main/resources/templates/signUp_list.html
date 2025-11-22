@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
    
-    <!-- sighUp List -->
+    <!-- signUp List -->
       <table class="table">
          <thead class="table-dark">
             <tr class="text-center">
@@ -15,19 +15,19 @@
          </thead>
          
          <tbody>
-            <tr class="text-center" th:each="sighUp, loop : ${paging}">
+            <tr class="text-center" th:each="signUp, loop : ${paging}">
                 <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
                <td class="text-center">
-                  <a th:href="@{|/sighUp/detail/${sighUp.id}|}" th:text="${sighUp.subject}"></a>
+                  <a th:href="@{|/signUp/detail/${signUp.id}|}" th:text="${signUp.subject}"></a>
                   <span class="text-danger small ms-2"
-                        th:if="${#lists.size(sighUp.answerList) > 0}" 
-                        th:text="${#lists.size(sighUp.answerList)}">
+                        th:if="${#lists.size(signUp.answerList) > 0}" 
+                        th:text="${#lists.size(signUp.answerList)}">
                     </span>
                </td>
-               <td><span th:if="${sighUp.author != null}" th:text="${sighUp.author.nickname}"></span></td>
-               <td th:text="${#temporals.format(sighUp.createDate, 'yyyy-MM-dd HH:mm')}"></td>
-               <td><span th:text="${#sets.size(sighUp.voter)}"></span></td> <!-- 추천수 출력 -->
-               <td><span th:text="${sighUp.view}"></span></td> <!-- 조회수 출력 -->
+               <td><span th:if="${signUp.author != null}" th:text="${signUp.author.nickname}"></span></td>
+               <td th:text="${#temporals.format(signUp.createDate, 'yyyy-MM-dd HH:mm')}"></td>
+               <td><span th:text="${#sets.size(signUp.voter)}"></span></td> <!-- 추천수 출력 -->
+               <td><span th:text="${signUp.view}"></span></td> <!-- 조회수 출력 -->
             </tr>
          </tbody>
       </table>
@@ -74,7 +74,7 @@
       <!-- 페이징처리 끝 -->
       
       <!-- page와 kw를 동시에 get요청 할수 있는 searchform -->
-      <form th:action="@{/sighUp/list}" method="get" id="searchForm">
+      <form th:action="@{/signUp/list}" method="get" id="searchForm">
            <input type="hidden" id="kw" name="kw" th:value="${kw}">
            <input type="hidden" id="page" name="page" th:value="${paging.number}">
        </form>

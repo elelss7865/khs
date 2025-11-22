@@ -38,13 +38,13 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class SignUpController {
 
-	private final SignUpService sighUpService;
+	private final SignUpService signUpService;
 	private final UserService userService;
 	private final UserRepository userRepository;
 
 //    @GetMapping("/list")
 //    public String list(Model model) {
-//        List<sighUp> questionList = this.questionService.getList();
+//        List<signUp> questionList = this.questionService.getList();
 //        model.addAttribute("questionList", questionList);
 //        return "question_list";
 //    }
@@ -54,108 +54,108 @@ public class SignUpController {
 	public String list(Model model, 
             @RequestParam(value="page", defaultValue="0") int page,
             @RequestParam(value = "kw", defaultValue = "") String kw) {
-		Page<SignUp> paging = this.sighUpService.getList(page, kw);
+		Page<SignUp> paging = this.signUpService.getList(page, kw);
 		
 		model.addAttribute("paging", paging);
 		model.addAttribute("kw", kw);
-		return "sighUp_list";
+		return "signUp_list";
 		}
 		
 	// 레시피 추가
 	@GetMapping(value = "/detail/{id}")
 	public String detail(Model model, @PathVariable("id") Integer id, AnswerForm answerForm) {
-	    SignUp sighUp = sighUpService.getsighUp(id);
-	    sighUpService.incrementViewCount(id);
+	    SignUp signUp = signUpService.getsignUp(id);
+	    signUpService.incrementViewCount(id);
 	    
 //	    log.info("유저네임" + question.getAuthor().getProfilePath());
-	    String profilePath = sighUp.getAuthor().getProfilePath();
+	    String profilePath = signUp.getAuthor().getProfilePath();
 	    model.addAttribute("profilePath", profilePath);
-	    model.addAttribute("sighUp", sighUp);
-	    return "sighUp_detail";
+	    model.addAttribute("signUp", signUp);
+	    return "signUp_detail";
 	}
     
 	// 접근제한(로그인 한 사용자만 접근가능)
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/create")
-    public String sighUpCreate(SignUpForm signUpForm) {
-        return "sighUp_form";
+    public String signUpCreate(SignUpForm signUpForm) {
+        return "signUp_form";
     }
     
     // 레시피 작성
 //    @PreAuthorize("isAuthenticated()")
     @PostMapping("/create")
-    public String sighUpCreate(@Valid SignUpForm signUpForm,
+    public String signUpCreate(@Valid SignUpForm signUpForm,
             BindingResult bindingResult, Principal principal, MultipartFile file) throws Exception{
         if (bindingResult.hasErrors()) {
-            return "sighUp_form";
+            return "signUp_form";
             
         }
         SiteUser siteUser = this.userService.getUser(principal.getName());
-        this.sighUpService.create(signUpForm.getSubject(), siteUser, signUpForm.getFile(),
+        this.signUpService.create(signUpForm.getSubject(), siteUser, signUpForm.getFile(),
         		signUpForm.getCookIntro(), signUpForm.getCategory(), signUpForm.getCookInfo_level(), 
         		signUpForm.getCookInfo_people(), signUpForm.getCookInfo_time(), signUpForm.getIngredient(),
         		signUpForm.getCapacity(), signUpForm.getContent(), signUpForm.getContentFile());
         log.info("로그(질문작성):" + signUpForm);
-        return "redirect:/sighUp/list";
+        return "redirect:/signUp/list";
     }
     
     // 질문 수정
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String sighUpModify(SignUpForm signUpForm, @PathVariable("id") Integer id, Principal principal, 
+    public String signUpModify(SignUpForm signUpForm, @PathVariable("id") Integer id, Principal principal, 
     		MultipartFile file) {
-    	SignUp sighUp = this.sighUpService.getsighUp(id);
-    	if(!sighUp.getAuthor().getUsername().equals(principal.getName())) {
+    	SignUp signUp = this.signUpService.getsignUp(id);
+    	if(!signUp.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
     	}
-    	signUpForm.setSubject(sighUp.getSubject());
-    	signUpForm.setCookIntro(sighUp.getCookIntro());
-    	signUpForm.setCategory(sighUp.getCategory());
-    	signUpForm.setCookInfo_people(sighUp.getCookInfo_level());
-    	signUpForm.setCookInfo_time(sighUp.getCookInfo_people());
-    	signUpForm.setCookInfo_level(sighUp.getCookInfo_time());
+    	signUpForm.setSubject(signUp.getSubject());
+    	signUpForm.setCookIntro(signUp.getCookIntro());
+    	signUpForm.setCategory(signUp.getCategory());
+    	signUpForm.setCookInfo_people(signUp.getCookInfo_level());
+    	signUpForm.setCookInfo_time(signUp.getCookInfo_people());
+    	signUpForm.setCookInfo_level(signUp.getCookInfo_time());
     	signUpForm.setFile(file);
-    	return "sighUp_form";
+    	return "signUp_form";
     }
     
     // 질문 수정 후 저장
 //    @PreAuthorize("isAuthenticated()")
     @PostMapping("/modify/{id}")
-    public String sighUpModify(@Valid SignUpForm signUpForm, BindingResult bindingResult, 
+    public String signUpModify(@Valid SignUpForm signUpForm, BindingResult bindingResult, 
             Principal principal, @PathVariable("id") Integer id, MultipartFile file) throws Exception {
         if (bindingResult.hasErrors()) {
-            return "sighUp_form";
+            return "signUp_form";
         }
-        SignUp sighUp = this.sighUpService.getsighUp(id);
-        if (!sighUp.getAuthor().getUsername().equals(principal.getName())) {
+        SignUp signUp = this.signUpService.getsignUp(id);
+        if (!signUp.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
-        this.sighUpService.modify(sighUp, signUpForm.getSubject(), signUpForm.getFile(),
+        this.signUpService.modify(signUp, signUpForm.getSubject(), signUpForm.getFile(),
         		signUpForm.getCookIntro(),signUpForm.getCategory(),signUpForm.getCookInfo_level(),
         		signUpForm.getCookInfo_people(),signUpForm.getCookInfo_time());
-        return String.format("redirect:/sighUp/detail/%s", id);
+        return String.format("redirect:/signUp/detail/%s", id);
     }
     
     // 질문 삭제
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
-    public String sighUpDaelete(Principal principal, @PathVariable("id") Integer id) {
-    	SignUp sighUp = this.sighUpService.getsighUp(id);
-    	if (!sighUp.getAuthor().getUsername().equals(principal.getName())) {
+    public String signUpDaelete(Principal principal, @PathVariable("id") Integer id) {
+    	SignUp signUp = this.signUpService.getsignUp(id);
+    	if (!signUp.getAuthor().getUsername().equals(principal.getName())) {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제권한이 없습니다.");
     	}
-    	this.sighUpService.delete(sighUp);
+    	this.signUpService.delete(signUp);
     	return "redirect:/";
     }
     
     // 추천 버튼 클릭 시 호출
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
-    public String sighUpVote(Principal principal, @PathVariable("id") Integer id) {
-    	SignUp sighUp = this.sighUpService.getsighUp(id);
+    public String signUpVote(Principal principal, @PathVariable("id") Integer id) {
+    	SignUp signUp = this.signUpService.getsignUp(id);
     	SiteUser siteuser = this.userService.getUser(principal.getName());
-    	this.sighUpService.vote(sighUp, siteuser);
-    	return String.format("redirect:/sighUp/detail/%s", id);
+    	this.signUpService.vote(signUp, siteuser);
+    	return String.format("redirect:/signUp/detail/%s", id);
     }
       
 }

@@ -22,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Controller
 public class SectionController {
 	
-	private final SignUpService sighUpService;
+	private final SignUpService signUpService;
 	private final UserService userService;
 	
 	// 페이징 구현(검색 기능 추가)
@@ -32,9 +32,9 @@ public class SectionController {
 	        @RequestParam(value = "kw", defaultValue = "") String kw,
 	        @RequestParam(value = "category", defaultValue = "") String category) {
 		
-	    Page<SignUp> paging3 = this.sighUpService.getAllList(page, kw);
+	    Page<SignUp> paging3 = this.signUpService.getAllList(page, kw);
 	    List<SiteUser> siteUsers3 = this.userService.getUsers(paging3);
-	    long totalCount = this.sighUpService.getTotalCount();
+	    long totalCount = this.signUpService.getTotalCount();
 	    
 	    model.addAttribute("siteUsers3", siteUsers3);    
 	    model.addAttribute("paging3", paging3);   // 전체 레시피 리스트

@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 @Controller
 public class AnswerController {
 
-    private final SignUpService sighUpService;
+    private final SignUpService signUpService;
     private final AnswerService answerService;
     private final UserService userService;
     
@@ -39,16 +39,16 @@ public class AnswerController {
     @PostMapping("/create/{id}")
     public String createAnswer(Model model, @PathVariable("id") Integer id, 
             @Valid AnswerForm answerForm, BindingResult bindingResult, Principal principal) {
-        SignUp sighUp = this.sighUpService.getsighUp(id);
+        SignUp signUp = this.signUpService.getsignUp(id);
         SiteUser siteUser = this.userService.getUser(principal.getName());
         if (bindingResult.hasErrors()) {
-            model.addAttribute("sighUp", sighUp);
-            return "sighUp_detail";
+            model.addAttribute("signUp", signUp);
+            return "signUp_detail";
         }
-        Answer answer = this.answerService.create(sighUp, 
+        Answer answer = this.answerService.create(signUp, 
                 answerForm.getContent(), siteUser);
-        return String.format("redirect:/sighUp/detail/%s#answer_%s", 
-                answer.getSighUp().getId(), answer.getId());
+        return String.format("redirect:/signUp/detail/%s#answer_%s", 
+                answer.getSignUp().getId(), answer.getId());
     }
     
     // 댓글 수정 Get 방식 처리
@@ -76,8 +76,8 @@ public class AnswerController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정완료되었습니다.");
         }
         this.answerService.modify(answer, answerForm.getContent());
-        return String.format("redirect:/sighUp/detail/%s#answer_%s", 
-                answer.getSighUp().getId(), answer.getId());
+        return String.format("redirect:/signUp/detail/%s#answer_%s", 
+                answer.getSignUp().getId(), answer.getId());
     }
     
     
@@ -90,7 +90,7 @@ public class AnswerController {
     		throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"삭제하시겠습니까?.");
     	}
     	this.answerService.delete(answer);
-    	return String.format("redirect:/sighUp/detail/%s", answer.getSighUp().getId());
+    	return String.format("redirect:/signUp/detail/%s", answer.getSignUp().getId());
     } 
     
      // 댓글 추천 버튼 클릭시 호출(답변 앵커 추가)
@@ -100,8 +100,8 @@ public class AnswerController {
     	Answer answer = this.answerService.getAnswer(id);
     	SiteUser siteUser = this.userService.getUser(principal.getName());
     	this.answerService.vote(answer, siteUser);
-    	return String.format("redirect:/sighUp/detail/%s#answer_%s", 
-    			answer.getSighUp().getId(),answer.getId());    }
+    	return String.format("redirect:/signUp/detail/%s#answer_%s", 
+    			answer.getSignUp().getId(),answer.getId());    }
     
     
 }

@@ -50,26 +50,26 @@
 		<div class="container mt-3">
 			<!-- 첫번째 줄 -->
 			<table class="table table-borderless">
-				<a href="/sighUp/list" style="color: green; font-size: 2.0em; text-decoration: none;">
+				<a href="/signUp/list" style="color: green; font-size: 2.0em; text-decoration: none;">
 				이번주 축제</a>
 				<tr>
-					<th th:each="sighUp, loop : ${paging1}">
+					<th th:each="signUp, loop : ${paging1}">
 						<div class="card" style="width: 15rem;">
-							<img th:src="${sighUp.filePath}"
+							<img th:src="${signUp.filePath}"
 								style="width: 239px; height: 200px;" class="card-img-top" alt="...">
 							<div class="card-body">
 								<h5 class="card-title">
 									<img th:src="${siteUsers1.get(loop.index).profilePath}"
 										class="rounded-circle" width="35px" height="35px"> 
-									<span th:if="${sighUp.author != null}"
-										th:text="${sighUp.author.nickname}"></span>
+									<span th:if="${signUp.author != null}"
+										th:text="${signUp.author.nickname}"></span>
 								</h5>
 
 								<div class="card-text">
-									<a th:href="@{|/sighUp/detail/${sighUp.id}|}"
-									   th:text="${sighUp.subject}"></a>
+									<a th:href="@{|/signUp/detail/${signUp.id}|}"
+									   th:text="${signUp.subject}"></a>
 								</div>
-								추천수 : <span th:text="${#sets.size(sighUp.voter)}"></span>
+								추천수 : <span th:text="${#sets.size(signUp.voter)}"></span>
 							</div>
 						</div>
 					</th>

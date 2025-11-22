@@ -19,11 +19,11 @@ public class AnswerService {
 	
 	private final AnswerRepository answerRepository;
 	
-	public Answer create(SignUp sighUp, String content, SiteUser author) {
+	public Answer create(SignUp signUp, String content, SiteUser author) {
 		Answer answer = new Answer();
 		answer.setContent(content);
 		answer.setCreateDate(LocalDateTime.now());
-		answer.setSighUp(sighUp);
+		answer.setSignUp(signUp);
 		answer.setAuthor(author);
 		this.answerRepository.save(answer);
 		return answer;
