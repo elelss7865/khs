@@ -1,238 +1,258 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org" 
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" 
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}">
 
 <head>
     <title>전국 축제 목록</title>
+
+<style>
+/* -------------------------------
+   오렌지 테마 공통 스타일
+-------------------------------- */
+:root {
+    --orange-main: #FF7732;
+    --orange-dark: #e16322;
+    --orange-light: #ffa875;
+}
+
+/* 꽉 찬 오렌지 버튼 */
+.btn-orange {
+    background-color: var(--orange-main);
+    border-color: var(--orange-main);
+    color: white;
+    font-weight: 600;
+}
+.btn-orange:hover {
+    background-color: var(--orange-dark);
+    border-color: var(--orange-dark);
+}
+
+/* 오렌지 아웃라인 버튼 */
+.btn-outline-orange {
+    color: var(--orange-main);
+    border-color: var(--orange-main);
+    font-weight: 600;
+}
+.btn-outline-orange:hover,
+.btn-outline-orange.active {
+    background-color: var(--orange-main);
+    color: white;
+}
+
+/* 초기화 버튼 → 오렌지 기반 */
+.btn-outline-secondary {
+    border-color: var(--orange-main) !important;
+    color: var(--orange-main) !important;
+    font-weight: 600;
+}
+.btn-outline-secondary:hover {
+    background-color: var(--orange-main) !important;
+    color: white !important;
+}
+
+/* -------------------------------
+   필터 박스 디자인
+-------------------------------- */
+.filter-box {
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    background: white;
+}
+
+/* 필터 박스 내부 내용 중앙 정렬 */
+.filter-box .row {
+  align-items: center;
+  justify-content: center; /* 가로 중앙 정렬 */
+}
+
+
+/* -------------------------------
+   정렬 영역 (테두리 밖)
+-------------------------------- */
+.sort-box {
+    margin-top: -5px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+.sort-box .btn {
+    margin-left: 8px;
+}
+
+</style>
 </head>
 
 <body>
-    <div layout:fragment="content" class="container my-5">
-    
-    <style>
-/* 보라색 테마 (기존 달력과 통일) */
-.btn-purple {
-    background-color: #8a2be2; /* 진한 보라색 */
-    border-color: #8a2be2;
-    color: white;
-}
-.btn-purple:hover {
-    background-color: #7b24cd;
-    border-color: #7b24cd;
-}
-.btn-outline-purple {
-    color: #8a2be2;
-    border-color: #8a2be2;
-}
-.btn-outline-purple:hover, .btn-outline-purple.active {
-    background-color: #8a2be2;
-    color: white;
-}
+<div layout:fragment="content" class="container my-5">
 
-/* 필터 섹션 스타일 */
-.filter-section {
-    background-color: #f7f0ff; /* 연한 보라색 배경 */
-}
+    <!-- 필터 영역 -->
+    <div class="filter-section p-4 mb-4 border rounded">
+        <div class="row g-3 mb-3 align-items-center">
 
-/* 축제 카드 스타일 (이미지처럼 "개최 중" 뱃지 추가) */
-.festival-card-wrapper {
-    position: relative;
-}
-.status-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: #8a2be2;
-    color: white;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 700;
-    z-index: 10;
-}
-</style>
-        
-        <div class="filter-section p-4 mb-4 border rounded">
-            <div class="row g-3 mb-3 align-items-center">
-                <div class="col-md-3">
-                    <select id="timeFilter" class="form-select">
-                        <option value="">시기</option>
-                        <option value="today">오늘</option>
-                        <option value="weekend">이번 주말</option>
-                        <option value="month">이번 달</option>
-                        </select>
-                </div>
-                <div class="col-md-3">
-                    <select id="regionFilter" class="form-select">
-                        <option value="">지역</option>
-                        <option value="서울">서울</option>
-                        <option value="경기">경기</option>
-                        <option value="부산">부산</option>
-                        </select>
-                </div>
-                <div class="col-md-3">
-                    <select id="categoryFilter" class="form-select">
-                        <option value="">카테고리</option>
-                        <option value="음악">음악/콘서트</option>
-                        <option value="음식">음식/요리</option>
-                        <option value="빛">빛/야경</option>
-                        </select>
-                </div>
-                <div class="col-md-auto">
-                    <button id="resetFilters" class="btn btn-outline-secondary">초기화</button>
-                </div>
-                <div class="col-md-auto">
-                    <button id="searchButton" class="btn btn-purple">검색</button>
-                </div>
+            <div class="col-md-4">
+                <select id="regionFilter" class="form-select">
+                    <option value="">지역</option>
+                    <option value="서울">서울</option>
+                    <option value="경기도">경기도</option>
+                    <option value="인천">인천</option>
+                    <option value="대전">대전</option>
+                    <option value="세종특별자치시">세종특별자치시</option>
+                    <option value="대구">대구</option>
+                    <option value="광구">광구</option>
+                    <option value="부산">부산</option>
+                    <option value="울산">울산</option>
+                    <option value="강원특별자치도">강원특별자치도</option>
+                    <option value="충청남도">충청남도</option>
+                    <option value="충청북도">충청북도</option>
+                    <option value="경상북도">경상북도</option>
+                    <option value="경상남도">경상남도</option>
+                    <option value="전북특별자치도">전북특별자치도</option>
+                    <option value="전라도">전라도</option>
+                    <option value="제주특별자치도">제주특별자치도</option>
+                </select>
             </div>
-            
-            <div class="sort-options d-flex justify-content-end align-items-center mt-3 pt-3 border-top">
-                <span class="me-3">정렬:</span>
-                <button class="btn btn-sm btn-outline-purple active" data-sort="popularity">인기순</button>
-                <button class="btn btn-sm btn-outline-purple ms-2" data-sort="startDate">시작일순</button>
-                <button class="btn btn-sm btn-outline-purple ms-2" data-sort="endDate">종료일순</button>
+
+            <div class="col-md-4">
+                <select id="categoryFilter" class="form-select">
+                    <option value="">카테고리</option>
+                    <option value="계절">계절</option>
+                    <option value="먹거리">먹거리</option>
+                    <option value="힐링">힐링</option>
+                    <option value="불꽃놀이">불꽃놀이</option>
+                    <option value="문화예술">문화예술</option>
+                    <option value="체험">체험</option>
+                </select>
             </div>
+
+            <div class="col-md-auto">
+                <button id="resetFilters" class="btn btn-outline-secondary">초기화</button>
+            </div>
+
+            <div class="col-md-auto">
+                <button id="searchButton" class="btn btn-orange">검색</button>
+            </div>
+            <div class="col-md-auto">
+                <button id="searchButton" class="btn btn-orange">등록</button>
+            </div>
+
         </div>
-        
-        <h3>검색 결과</h3>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="festivalCardList">
-            </div>
-
     </div>
     
-    <script>
-    // 임시 데이터 (지역, 카테고리 정보 추가)
-    const allFestivalData = [
-        { name: "메리마마 크리스마스", date_start: "2025-11-01", date_end: "2025-11-23", location: "전남 화순군", region: "전남", category: "크리스마스", status: "개최 중", image: "/image/christmas.png" },
-        { name: "별빛 축제", date_start: "2025-11-18", date_end: "2025-12-25", location: "경북 구미시", region: "경북", category: "빛", status: "개최 중", image: "/image/starlight.png" },
-        { name: "힐링 콘서트", date_start: "2025-12-01", date_end: "2025-12-01", location: "서울 마포구", region: "서울", category: "음악", status: "예정", image: "/image/concert.png" },
-        { name: "전국 음식 박람회", date_start: "2025-10-10", date_end: "2025-10-12", location: "부산 해운대", region: "부산", category: "음식", status: "종료", image: "/image/food.png" },
-        // ... 실제 데이터는 더 많을 것입니다.
-    ];
+    <div class="sort-box">
+    <span class="me-2">정렬:</span>
+    <button class="btn btn-sm btn-outline-orange active" data-sort="popularity">인기순</button>
+    <button class="btn btn-sm btn-outline-orange" data-sort="startDate">시작일순</button>
+    <button class="btn btn-sm btn-outline-orange" data-sort="endDate">종료일순</button>
+</div>
 
-    $(document).ready(function() {
-        let currentSort = 'popularity'; // 기본 정렬 기준
+    <!-- 결과 카드 영역 -->
+    <h3>검색 결과</h3>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="festivalCardList"></div>
 
-        // 현재 날짜를 YYYY-MM-DD 형태로 반환하는 함수
-        const getTodayDateStr = () => {
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        };
+</div>
 
-        // 1. 데이터 필터링 로직
-        const filterFestivals = () => {
-            const todayStr = getTodayDateStr();
-            const selectedTime = $('#timeFilter').val();
-            const selectedRegion = $('#regionFilter').val();
-            const selectedCategory = $('#categoryFilter').val();
+<script>
+// 임시 데이터
+const allFestivalData = [
+    { name: "메리마마 크리스마스", date_start: "2025-11-01", date_end: "2025-11-23", location: "전남 화순군", region: "전남", category: "크리스마스", status: "개최 중", image: "/image/christmas.png" },
+    { name: "별빛 축제", date_start: "2025-11-18", date_end: "2025-12-25", location: "경북 구미시", region: "경북", category: "빛", status: "개최 중", image: "/image/starlight.png" },
+    { name: "힐링 콘서트", date_start: "2025-12-01", date_end: "2025-12-01", location: "서울 마포구", region: "서울", category: "음악", status: "예정", image: "/image/concert.png" },
+    { name: "전국 음식 박람회", date_start: "2025-10-10", date_end: "2025-10-12", location: "부산 해운대", region: "부산", category: "음식", status: "종료", image: "/image/food.png" }
+];
 
-            let filteredList = allFestivalData.filter(festival => {
-                const start = new Date(festival.date_start);
-                const end = new Date(festival.date_end);
-                const today = new Date(todayStr);
+$(document).ready(function () {
+    let currentSort = 'popularity';
 
-                // 지역 필터링
-                if (selectedRegion && festival.region !== selectedRegion) {
-                    return false;
-                }
-                
-                // 카테고리 필터링
-                if (selectedCategory && festival.category !== selectedCategory) {
-                    return false;
-                }
+    const getToday = () => {
+        const now = new Date();
+        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    };
 
-                // 시기 필터링 (간단하게 '개최 중'인 축제만 필터링)
-                if (selectedTime === 'today') {
-                    // 오늘 개최 중인 축제만
-                    return start <= today && end >= today;
-                } 
-                // 다른 시간 필터링 로직은 필요에 따라 추가합니다.
+    const filterFestivals = () => {
+        const today = new Date(getToday());
+        const selectedTime = $('#timeFilter').val();
+        const selectedRegion = $('#regionFilter').val();
+        const selectedCategory = $('#categoryFilter').val();
 
-                // 필터 조건이 없으면 모두 통과
-                return true;
-            });
-            
-            // 2. 데이터 정렬
-            sortFestivals(filteredList);
+        let filtered = allFestivalData.filter(f => {
+            const start = new Date(f.date_start);
+            const end = new Date(f.date_end);
 
-            // 3. 렌더링
-            renderFestivalCards(filteredList);
-        };
-        
-        // 2. 데이터 정렬 로직
-        const sortFestivals = (list) => {
-            if (currentSort === 'startDate') {
-                list.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
-            } else if (currentSort === 'endDate') {
-                list.sort((a, b) => new Date(b.date_end) - new Date(a.date_end));
-            } else if (currentSort === 'popularity') {
-                // TODO: 인기순 정렬 로직 (조회수, 좋아요 등) 추가
-                // 현재는 이름순으로 임시 정렬
-                list.sort((a, b) => a.name.localeCompare(b.name));
-            }
-        };
+            if (selectedRegion && f.region !== selectedRegion) return false;
+            if (selectedCategory && f.category !== selectedCategory) return false;
 
-
-        // 3. 축제 카드 렌더링 로직
-        const renderFestivalCards = (festivals) => {
-            const listEl = $('#festivalCardList');
-            listEl.empty();
-            
-            if (festivals.length === 0) {
-                listEl.append('<div class="col-12"><p>검색 조건에 맞는 축제가 없습니다.</p></div>');
-                return;
+            if (selectedTime === 'today') {
+                return start <= today && end >= today;
             }
 
-            festivals.forEach(festival => {
-                const cardHtml = `
-                    <div class="col festival-card-wrapper">
-                        <div class="card h-100">
-                            <span class="status-badge">${festival.status}</span>
-                            <img src="${festival.image}" class="card-img-top" alt="${festival.name}" style="height: 200px; object-fit: cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">${festival.name}</h5>
-                                <p class="card-text text-muted">
-                                    ${festival.date_start.slice(5).replace('-', '.')}-${festival.date_end.slice(5).replace('-', '.')}
-                                    <br>
-                                    ${festival.location}
-                                </p>
-                            </div>
+            return true;
+        });
+
+        sortFestivals(filtered);
+        renderFestivalCards(filtered);
+    };
+
+    const sortFestivals = (list) => {
+        if (currentSort === 'startDate') {
+            list.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
+        } else if (currentSort === 'endDate') {
+            list.sort((a, b) => new Date(b.date_end) - new Date(a.date_end));
+        } else {
+            list.sort((a, b) => a.name.localeCompare(b.name));
+        }
+    };
+
+    const renderFestivalCards = (festivals) => {
+        const list = $('#festivalCardList');
+        list.empty();
+
+        if (festivals.length === 0) {
+            list.append('<div class="col-12"><p>검색 조건에 맞는 축제가 없습니다.</p></div>');
+            return;
+        }
+
+        festivals.forEach(f => {
+            list.append(`
+                <div class="col festival-card-wrapper">
+                    <div class="card h-100">
+                        <span class="status-badge">${f.status}</span>
+                        <img src="${f.image}" class="card-img-top" style="height:200px; object-fit:cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">${f.name}</h5>
+                            <p class="card-text text-muted">
+                                ${f.date_start.slice(5).replace('-', '.')} - ${f.date_end.slice(5).replace('-', '.')}<br>
+                                ${f.location}
+                            </p>
                         </div>
                     </div>
-                `;
-                listEl.append(cardHtml);
-            });
-        };
-
-        // 4. 이벤트 연결
-        
-        // 검색 버튼
-        $('#searchButton').on('click', filterFestivals);
-        
-        // 초기화 버튼
-        $('#resetFilters').on('click', () => {
-            $('#timeFilter').val('');
-            $('#regionFilter').val('');
-            $('#categoryFilter').val('');
-            filterFestivals(); // 필터 초기화 후 목록 다시 렌더링
+                </div>
+            `);
         });
+    };
 
-        // 정렬 버튼
-        $('.sort-options button').on('click', function() {
-            $('.sort-options button').removeClass('active');
-            $(this).addClass('active');
-            currentSort = $(this).data('sort');
-            filterFestivals(); // 정렬 기준 변경 후 목록 다시 렌더링
-        });
+    $('#searchButton').on('click', filterFestivals);
 
-
-        // 초기 로드: 필터링 없이 전체 목록 표시
+    $('#resetFilters').on('click', () => {
+        $('#timeFilter').val('');
+        $('#regionFilter').val('');
+        $('#categoryFilter').val('');
         filterFestivals();
     });
+
+    $('.sort-options button').on('click', function () {
+        $('.sort-options button').removeClass('active');
+        $(this).addClass('active');
+        currentSort = $(this).data('sort');
+        filterFestivals();
+    });
+
+    filterFestivals();
+});
 </script>
+
 </body>
 </html>
