@@ -117,9 +117,13 @@ public class travelController {
     	travelForm.setSubject(travel.getSubject());
     	travelForm.setTravelIntro(travel.getTravelIntro());
     	travelForm.setCategory(travel.getCategory());
-    	travelForm.setTravelInfo_place(travel.getTravelInfo_day());
-    	travelForm.setTravelInfo_pay(travel.getTravelInfo_place());
-    	travelForm.setTravelInfo_day(travel.getTravelInfo_pay());
+    	travelForm.setTravelInfo_day(travel.getTravelInfo_day());
+    	travelForm.setTravelInfo_place(travel.getTravelInfo_place());
+    	travelForm.setTravelInfo_pay(travel.getTravelInfo_pay());
+    	travelForm.setContent(travel.getContent());
+    	travelForm.setTravelInfo_phone(travel.getTravelInfo_phone());
+    	travelForm.setTravelInfo_organizer(travel.getTravelInfo_organizer());
+    	travelForm.setTravelInfo_homepage(travel.getTravelInfo_homepage());
     	travelForm.setFile(file);
     	return "travel_form";
     }

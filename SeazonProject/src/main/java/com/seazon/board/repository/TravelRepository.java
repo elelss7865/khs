@@ -20,5 +20,15 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 	
 	@Modifying
 	@Query("UPDATE Travel q SET q.view = q.view + 1 WHERE q.id = :id")
-	void incrementViewCount(@Param("id") int id);                             // 추천축제
+	void incrementViewCount(@Param("id") int id);        
+	
+//	@Query("SELECT t FROM Travel t WHERE t.travelInfo_day LIKE %:month%")
+//	    List<Travel> findByMonth(@Param("month") String month);// 추천축제
+	
+	@Query("SELECT t FROM Travel t WHERE SUBSTRING(t.travelInfo_day, 1, 4) = :year AND SUBSTRING(t.travelInfo_day, 6, 2) = :month")
+	List<Travel> findByYearAndMonth(@Param("year") String year,
+	                                @Param("month") String month);
+	
+	@Query("SELECT t FROM Travel t WHERE substring(t.travelInfo_day, 6, 2) = :month")
+	List<Travel> findByMonth(@Param("month") String month);
 }

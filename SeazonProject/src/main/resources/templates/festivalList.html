@@ -51,6 +51,24 @@
     color: white !important;
 }
 
+/* -----------------------------------
+   관리자 전용 회색 버튼 스타일
+----------------------------------- */
+.btn-admin-gray {
+    background-color: #e0e0e0;   /* 연한 회색 */
+    border-color: #bdbdbd;       /* 중간 회색 */
+    color: #333;                 /* 진한 글씨 */
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 6px;
+}
+
+.btn-admin-gray:hover {
+    background-color: #bdbdbd;    /* hover 시 조금 더 진한 회색 */
+    border-color: #9e9e9e;
+    color: #111;
+}
+
 /* -------------------------------
    필터 박스 디자인
 -------------------------------- */
@@ -135,9 +153,15 @@
             <div class="col-md-auto">
                 <button id="searchButton" class="btn btn-orange">검색</button>
             </div>
-            <div class="col-md-auto"  sec:authorize="authentication.name == 'wcadmin'">
-              <button type="button" class="btn btn-orange" onclick="location.href='/travel/create'">등록</button>
-            </div>
+           <div class="col-md-auto" sec:authorize="authentication.name == 'wcadmin'">
+    <button type="button" class="btn btn-admin-gray"
+            onclick="location.href='/travel/create'">등록</button>
+</div>
+
+<div class="col-md-auto" sec:authorize="authentication.name == 'wcadmin'">
+    <button type="button" class="btn btn-admin-gray"
+            onclick="location.href='/travel/list'">조회</button>
+</div>
 
         </div>
     </div>

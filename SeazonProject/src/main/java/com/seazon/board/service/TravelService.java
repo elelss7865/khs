@@ -90,23 +90,13 @@ public class TravelService {
       public void create(String subject,SiteUser user,MultipartFile file,String travelIntro,
     	        String category,String travelInfo_day,String travelInfo_place,String travelInfo_pay,
     	        String content,String travelInfo_phone,String travelInfo_organizer,String travelInfo_homepage) throws Exception {
-    	  
-//		// Check if the parameters are null or empty
-//		if (file == null || contentFile == null) {
-//		   throw new IllegalArgumentException("File parameters cannot be null");
-//		}
-//		
+	
 		// 썸네일 저장
 		String projectPath = "D:\\kim\\boot\\files";
 		UUID uuid = UUID.randomUUID();
 		String fileName = uuid + "_" + file.getOriginalFilename();
 		File saveFile = new File(projectPath, fileName);
 		file.transferTo(saveFile);
-		
-//		// 축제 순서 이미지 저장
-//		String contentFileName = uuid + "_" + contentFile.getOriginalFilename();
-//		File contentSaveFile = new File(projectPath + "/contents", contentFileName);
-//		contentFile.transferTo(contentSaveFile);
 		
 	     Travel r = new Travel();
 	     
