@@ -88,7 +88,7 @@ public class TravelService {
       
       // 축제 저장 기능
       public void create(String subject,SiteUser user,MultipartFile file,String travelIntro,
-    	        String category,String travelInfo_day,String travelInfo_place,String travelInfo_pay,
+    	        String category,String place,String travelInfo_day,String travelInfo_place,String travelInfo_pay,
     	        String content,String travelInfo_phone,String travelInfo_organizer,String travelInfo_homepage) throws Exception {
 	
 		// 썸네일 저장
@@ -108,7 +108,26 @@ public class TravelService {
 	     r.setCreateDate(LocalDateTime.now());
 	     r.setTravelIntro(travelIntro);
 	     r.setCategory(category);
+	     r.setPlace(place);
 	     r.setTravelInfo(travelInfo_day + travelInfo_place + travelInfo_pay);
+	     r.setTravelInfo_day(travelInfo_day);
+	     
+	  	    // 날짜 처리 로직 추가 👇
+	         if (travelInfo_day != null && travelInfo_day.contains("~")) {
+	             // 1. "~" 기준으로 문자열 분리
+	             String[] dates = travelInfo_day.split("~"); 
+	             
+	             if (dates.length == 2) {
+	                 // 2. 공백 제거 후 시작일/종료일 추출
+	                 String startDate = dates[0].trim();
+	                 String endDate = dates[1].trim();
+
+	                 // 3. 엔티티에 설정 
+	                 r.setTravel_start_date(startDate);
+	                 r.setTravel_end_date(endDate);
+	             }
+	         }
+	         
 	     r.setTravelInfo_day(travelInfo_day);
 	     r.setTravelInfo_place(travelInfo_place);
 	     r.setTravelInfo_pay(travelInfo_pay);
@@ -162,6 +181,20 @@ public class TravelService {
           Specification<Travel> spec = search(kw);
 
           return this.travelRepository.findAll(spec, pageable);
+      }
+      
+      /**
+       * 카테고리 값을 기반으로 travel 데이터를 조회합니다.
+       * @param category 조회할 카테고리 문자열 (예: "먹거리", "힐링")
+       * @return 해당 카테고리에 속하는 Travel 엔티티 리스트
+       */
+      public List<Travel> getListByCategory(String category) {
+          if (category == null || category.isEmpty()) {
+              // 카테고리가 null이거나 비어있으면 전체 목록 반환
+              return this.travelRepository.findAll();
+          }
+          // Repository에서 카테고리별로 조회
+          return this.travelRepository.findByCategory(category);
       }
       
       // 모든 게시물(section)

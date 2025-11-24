@@ -51,25 +51,35 @@
 			<!-- 첫번째 줄 -->
 			<table class="table table-borderless">
 				<a href="/travel/list" style="color: green; font-size: 2.0em; text-decoration: none;">
-				이번주 축제</a>
+				축제 안내</a>
 				<tr>
 					<th th:each="travel, loop : ${paging1}">
 						<div class="card" style="width: 15rem;">
 							<img th:src="${travel.filePath}"
-								style="width: 239px; height: 200px;" class="card-img-top" alt="...">
+								style="width: 239px; height: 300px;" class="card-img-top" alt="...">
 							<div class="card-body">
-								<h5 class="card-title">
-									<img th:src="${siteUsers1.get(loop.index).profilePath}"
-										class="rounded-circle" width="35px" height="35px"> 
-									<span th:if="${travel.author != null}"
-										th:text="${travel.author.nickname}"></span>
-								</h5>
+								
+								<!-- 1. 첫 줄: 축제 이름 (두꺼운 글씨) 및 상세 페이지 링크 -->
+                                <h5 class="card-title fw-bold mb-1">
+                                    <a th:href="@{|/travel/detail/${travel.id}|}"
+                                       th:text="${travel.subject}" class="text-decoration-none text-dark"></a>
+                                </h5>
 
-								<div class="card-text">
-									<a th:href="@{|/travel/detail/${travel.id}|}"
-									   th:text="${travel.subject}"></a>
-								</div>
-								추천수 : <span th:text="${#sets.size(travel.voter)}"></span>
+                                <!-- 2. 두 번째 줄: 기간 (travelInfo_day) -->
+                                <div class="card-text small text-secondary mb-1" th:if="${travel.travelInfo_day != null}">
+                                    기간: <span th:text="${travel.travelInfo_day}"></span>
+                                </div>
+                                
+                                <!-- 3. 세 번째 줄: 장소 (travelInfo_place) -->
+                                <div class="card-text small text-secondary mb-3" th:if="${travel.place != null}">
+                                    장소: <span th:text="${travel.place}"></span>
+                                </div>
+								
+								<!-- 4. 마지막 줄: 추천수 -->
+                                <div class="small text-muted border-top pt-2">
+                                    추천수 : <span th:text="${#sets.size(travel.voter)}">0</span>
+                                </div>
+								
 							</div>
 						</div>
 					</th>

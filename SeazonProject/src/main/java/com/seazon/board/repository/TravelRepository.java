@@ -18,6 +18,9 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 	Page<Travel> findAll(Pageable pageable); // 페이징 구현하기
 	Page<Travel> findAll(Specification<Travel> spec, Pageable pageable);  // 검색기능
 	
+	// 카테고리별로 모든 Travel 데이터를 조회하는 메서드 추가
+    List<Travel> findByCategory(String category);
+	
 	@Modifying
 	@Query("UPDATE Travel q SET q.view = q.view + 1 WHERE q.id = :id")
 	void incrementViewCount(@Param("id") int id);        
@@ -31,4 +34,5 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 	
 	@Query("SELECT t FROM Travel t WHERE substring(t.travelInfo_day, 6, 2) = :month")
 	List<Travel> findByMonth(@Param("month") String month);
+	
 }

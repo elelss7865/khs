@@ -106,14 +106,15 @@
 
 <body>
 <div layout:fragment="content" class="container my-5">
+    
+    <form th:action="@{/festivals/list}" method="get" id="filterForm">
+        
+        <div class="filter-section p-4 mb-4 border rounded">
+            <div class="row g-3 mb-3 align-items-center">
 
-    <!-- 필터 영역 -->
-    <div class="filter-section p-4 mb-4 border rounded">
-        <div class="row g-3 mb-3 align-items-center">
-
-            <div class="col-md-4">
-                <select id="regionFilter" class="form-select">
-                    <option value="">지역</option>
+                <div class="col-md-4">
+                    <select id="regionFilter" class="form-select" name="region">
+                        <option value="">지역</option>
                     <option value="서울">서울</option>
                     <option value="경기도">경기도</option>
                     <option value="인천">인천</option>
@@ -166,115 +167,93 @@
         </div>
     </div>
     
-    <div class="sort-box">
-    <span class="me-2">정렬:</span>
-    <button class="btn btn-sm btn-outline-orange active" data-sort="popularity">인기순</button>
-    <button class="btn btn-sm btn-outline-orange" data-sort="startDate">시작일순</button>
-    <button class="btn btn-sm btn-outline-orange" data-sort="endDate">종료일순</button>
-</div>
+    <h3 class="text-success mb-3">검색 결과</h3>
+    
+   <div class="container mt-3">
+    <table class="table table-borderless">
+        <tr class="d-flex flex-wrap">
+            <td th:each="travel : ${travelList}" class="p-2 col-md-3">
+                <div class="card h-100" style="width: 15rem;">
+                    <img th:src="${travel.filePath}"
+                         style="width: 100%; height: 300px; object-fit: cover;" class="card-img-top" alt="축제 이미지">
+                    
+                    <!-- 👇 카드 본문 수정 시작 👇 -->
+                    <div class="card-body">
+                        
+                        <!-- 1. 첫 줄: 축제 이름 (두꺼운 글씨) 및 상세 페이지 링크 -->
+                        <h5 class="card-title fw-bold mb-1">
+                            <a th:href="@{|/travel/detail/${travel.id}|}"
+                               th:text="${travel.subject}" class="text-decoration-none text-dark"></a>
+                        </h5>
 
-    <!-- 결과 카드 영역 -->
-    <h3>검색 결과</h3>
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4" id="festivalCardList"></div>
-
-</div>
+                        <!-- 2. 두 번째 줄: 기간 (travelInfo_day) -->
+                        <div class="card-text small text-secondary mb-1" th:if="${travel.travelInfo_day != null}">
+                            기간: <span th:text="${travel.travelInfo_day}"></span>
+                        </div>
+                        
+                        <!-- 3. 세 번째 줄: 장소 (travelInfo_place) -->
+                        <div class="card-text small text-secondary mb-3" th:if="${travel.place != null}">
+                            장소: <span th:text="${travel.place}"></span>
+                        </div>
+                        
+                        <!-- 4. 마지막 줄: 추천수 -->
+                        <div class="small text-muted border-top pt-2">
+                            추천수 : <span th:text="${#sets.size(travel.voter)}">0</span>
+                        </div>
+                        
+                    </div>
+                    <!-- 👆 카드 본문 수정 끝 👆 -->
+                </div>
+            </td>
+        </tr>
+            <tr th:if="${#lists.isEmpty(travelList)}">
+                <td colspan="4">검색 조건에 맞는 축제가 없습니다.</td>
+            </tr>
+        </table>
+    </div>
+    </div>
 
 <script>
-// 임시 데이터
-const allFestivalData = [
-    { name: "메리마마 크리스마스", date_start: "2025-11-01", date_end: "2025-11-23", location: "전남 화순군", region: "전남", category: "크리스마스", status: "개최 중", image: "/image/christmas.png" },
-    { name: "별빛 축제", date_start: "2025-11-18", date_end: "2025-12-25", location: "경북 구미시", region: "경북", category: "빛", status: "개최 중", image: "/image/starlight.png" },
-    { name: "힐링 콘서트", date_start: "2025-12-01", date_end: "2025-12-01", location: "서울 마포구", region: "서울", category: "음악", status: "예정", image: "/image/concert.png" },
-    { name: "전국 음식 박람회", date_start: "2025-10-10", date_end: "2025-10-12", location: "부산 해운대", region: "부산", category: "음식", status: "종료", image: "/image/food.png" }
-];
 
 $(document).ready(function () {
-    let currentSort = 'popularity';
-
-    const getToday = () => {
-        const now = new Date();
-        return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-    };
-
-    const filterFestivals = () => {
-        const today = new Date(getToday());
-        const selectedTime = $('#timeFilter').val();
-        const selectedRegion = $('#regionFilter').val();
-        const selectedCategory = $('#categoryFilter').val();
-
-        let filtered = allFestivalData.filter(f => {
-            const start = new Date(f.date_start);
-            const end = new Date(f.date_end);
-
-            if (selectedRegion && f.region !== selectedRegion) return false;
-            if (selectedCategory && f.category !== selectedCategory) return false;
-
-            if (selectedTime === 'today') {
-                return start <= today && end >= today;
-            }
-
-            return true;
-        });
-
-        sortFestivals(filtered);
-        renderFestivalCards(filtered);
-    };
-
-    const sortFestivals = (list) => {
-        if (currentSort === 'startDate') {
-            list.sort((a, b) => new Date(a.date_start) - new Date(b.date_start));
-        } else if (currentSort === 'endDate') {
-            list.sort((a, b) => new Date(b.date_end) - new Date(a.date_end));
-        } else {
-            list.sort((a, b) => a.name.localeCompare(b.name));
-        }
-    };
-
-    const renderFestivalCards = (festivals) => {
-        const list = $('#festivalCardList');
-        list.empty();
-
-        if (festivals.length === 0) {
-            list.append('<div class="col-12"><p>검색 조건에 맞는 축제가 없습니다.</p></div>');
-            return;
-        }
-
-        festivals.forEach(f => {
-            list.append(`
-                <div class="col festival-card-wrapper">
-                    <div class="card h-100">
-                        <span class="status-badge">${f.status}</span>
-                        <img src="${f.image}" class="card-img-top" style="height:200px; object-fit:cover;">
-                        <div class="card-body">
-                            <h5 class="card-title">${f.name}</h5>
-                            <p class="card-text text-muted">
-                                ${f.date_start.slice(5).replace('-', '.')} - ${f.date_end.slice(5).replace('-', '.')}<br>
-                                ${f.location}
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            `);
-        });
-    };
-
-    $('#searchButton').on('click', filterFestivals);
+    
+    $('#searchButton').on('click', function() {
+        // 실제로는 폼 데이터를 수집하여 서버로 전송하는 로직이 여기에 들어와야 합니다.
+        alert('검색 기능은 현재 서버 연동 전이므로 동작하지 않습니다.');
+    });
 
     $('#resetFilters').on('click', () => {
-        $('#timeFilter').val('');
         $('#regionFilter').val('');
         $('#categoryFilter').val('');
-        filterFestivals();
+        // 실제로는 필터 초기화 후 서버로 재요청하는 로직이 여기에 들어와야 합니다.
+        // 현재는 필터 값만 초기화됩니다.
     });
 
-    $('.sort-options button').on('click', function () {
-        $('.sort-options button').removeClass('active');
+    $('.sort-box button').on('click', function () {
+        $('.sort-box button').removeClass('active');
         $(this).addClass('active');
-        currentSort = $(this).data('sort');
-        filterFestivals();
+        // currentSort = $(this).data('sort'); // 이 로직도 서버 연동 시 필요 없음
+        alert('정렬 기능은 현재 서버 연동 전이므로 동작하지 않습니다.');
+    });
+    
+ // 2. 초기화 버튼 클릭 시 동작 (카테고리/지역 필터를 비우고 폼 제출)
+    $('#resetFilters').on('click', () => {
+        $('#regionFilter').val('');
+        $('#categoryFilter').val('');
+        
+        // 폼 제출 (필터가 비워진 상태로 서버에 재요청)
+        $('#filterForm').submit();
+    });
+    
+    // 3. 검색 버튼은 type="submit"으로 변경했기 때문에 별도 JS 필요 없음.
+    // 4. 정렬 버튼은 현재 서버 연동이 안 되어 있으므로 경고 메시지는 삭제하고, 현재 상태로 유지합니다.
+    $('.sort-box button').on('click', function () {
+        $('.sort-box button').removeClass('active');
+        $(this).addClass('active');
+        // TODO: 향후 정렬 기준 값을 hidden input에 저장하고 폼 제출하도록 수정 필요
+        alert('정렬 기능은 아직 서버와 연동되지 않았습니다.');
     });
 
-    filterFestivals();
 });
 </script>
 

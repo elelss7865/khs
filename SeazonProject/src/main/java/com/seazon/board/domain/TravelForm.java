@@ -27,7 +27,10 @@ public class TravelForm {
 	private String travelIntro;     
 	
 	// 카테고리
-    private String category;     
+    private String category;   
+    
+    // 장소
+    private String place;     
 	
  // 축제 일정
     private String travelInfo_day;     

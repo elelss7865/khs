@@ -97,7 +97,7 @@ public class travelController {
      SiteUser siteUser = userRepository.findByusername(loginId)
     	        .orElseThrow();
         this.travelService.create(travelForm.getSubject(), siteUser, travelForm.getFile(),
-        		travelForm.getTravelIntro(), travelForm.getCategory(), travelForm.getTravelInfo_day(), 
+        		travelForm.getTravelIntro(), travelForm.getCategory(),travelForm.getPlace(), travelForm.getTravelInfo_day(), 
         		travelForm.getTravelInfo_place(), travelForm.getTravelInfo_pay(),
         		travelForm.getContent(),travelForm.getTravelInfo_phone(),travelForm.getTravelInfo_organizer(),
         		travelForm.getTravelInfo_homepage());

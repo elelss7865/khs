@@ -60,8 +60,14 @@ public class Travel {
 	private String travelInfo;      // 축제 내용
 	
 	private String category;      // 카테고리
+	
+	private String place;      // 장소
     
 	private String travelInfo_day;     // 축제 일정
+	
+	private String Travel_start_date;     // 축제 시작하는 날
+	
+	private String Travel_end_date;     // 축제 끝나는 날
 
 	private String travelInfo_place;     // 축제 장소
 
