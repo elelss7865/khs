@@ -1,5 +1,6 @@
 package com.seazon.board.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,15 +41,31 @@ public class FestivalController {
      */
     @GetMapping("/list")
     public String getFestivalList(Model model, 
-                                  @RequestParam(value = "category", required = false) String category) {
-        
-        // category 파라미터가 없거나 비어있는 경우, Service에서 전체 목록을 반환하도록 처리합니다.
-        List<Travel> travelList = this.travelService.getListByCategory(category);
+          @RequestParam(value = "category", required = false) String category,
+          @RequestParam(value = "place", required = false) String place) {
+
+        List<Travel> travelList = this.travelService.getListByFilter(category, place);
 
         model.addAttribute("travelList", travelList);
-        // 선택 상태 유지를 위해 다시 모델에 담습니다.
         model.addAttribute("selectedCategory", category); 
+        model.addAttribute("selectedPlace", place); 
         
+        return "festivalList";
+    }
+    
+    
+    // 전체검색
+    @GetMapping("/search")
+    public String searchFestival(Model model,
+            @RequestParam(value="kw", required=false) String kw) {
+
+        // 검색 실행
+        Page<Travel> paging = this.travelService.getList(0, kw);
+
+        // 결과 화면으로 전달
+        model.addAttribute("travelList", paging.getContent());
+        model.addAttribute("kw", kw);
+
         return "festivalList";
     }
 

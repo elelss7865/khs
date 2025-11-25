@@ -113,7 +113,7 @@
             <div class="row g-3 mb-3 align-items-center">
 
                 <div class="col-md-4">
-                    <select id="regionFilter" class="form-select" name="region">
+                    <select id="regionFilter" class="form-select" name="place">
                         <option value="">지역</option>
                     <option value="서울">서울</option>
                     <option value="경기도">경기도</option>
@@ -136,7 +136,7 @@
             </div>
 
             <div class="col-md-4">
-                <select id="categoryFilter" class="form-select">
+                <select id="categoryFilter" class="form-select" name="category">
                     <option value="">카테고리</option>
                     <option value="계절">계절</option>
                     <option value="먹거리">먹거리</option>
@@ -217,11 +217,6 @@
 
 $(document).ready(function () {
     
-    $('#searchButton').on('click', function() {
-        // 실제로는 폼 데이터를 수집하여 서버로 전송하는 로직이 여기에 들어와야 합니다.
-        alert('검색 기능은 현재 서버 연동 전이므로 동작하지 않습니다.');
-    });
-
     $('#resetFilters').on('click', () => {
         $('#regionFilter').val('');
         $('#categoryFilter').val('');

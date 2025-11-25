@@ -19,7 +19,9 @@ public interface TravelRepository extends JpaRepository<Travel, Integer> {
 	Page<Travel> findAll(Specification<Travel> spec, Pageable pageable);
 	
 	// 카테고리별로 모든 Travel 데이터를 조회하는 메서드 추가
-    List<Travel> findByCategory(String category);
+	List<Travel> findByCategory(String category);
+	List<Travel> findByPlace(String place);
+	List<Travel> findByCategoryAndPlace(String category, String place);
 	
 	@Modifying
 	@Query("UPDATE Travel q SET q.view = q.view + 1 WHERE q.id = :id")

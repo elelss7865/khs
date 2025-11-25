@@ -26,11 +26,17 @@
         </li>
       </ul>
 
-      <!-- 검색창 -->
-      <form class="d-flex ms-auto me-4" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+      <!-- 검색창 
+      <form class="d-flex ms-auto me-4" method="get" action="/festivals/search">
+        <input class="form-control me-2" type="text" name="kw" placeholder="Search" />
         <button class="btn btn-outline-success" type="submit">Search</button>
-      </form>
+      </form>  -->
+      
+         <li class="nav-item mx-3">
+        <a class="nav-link" href="/index">
+            <img src="/image/free-icon-ballons-5089857.png" class="nav-icon">
+        </a>
+       </li>
 
       <!-- 로그인하지 않은 상태 -->
       <div class="d-flex ms-auto" sec:authorize="isAnonymous()">

@@ -61,13 +61,15 @@ public class TravelService {
                     // u2 : a 와 다시한번 SiteUser 엔티티와 아우터 조인하여 SiteUser 엔티티의 객체(답변 작성자를 검색하기 위해서 필요)
                
                return cb.or(
-            		   cb.like(r.get("subject"), "%" + kw + "%"),     // 제목 
-                       cb.like(r.get("content"), "%" + kw + "%"),      // 내용 
-                       cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자 
-                       cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용 
-                       cb.like(u2.get("username"), "%" + kw + "%"),   // 답변 작성자 
-               		   cb.like(r.get("category"), "%" + kw + "%"),    // 카테고리
-                       cb.like(r.get("travelInfo"), "%" + kw + "%"));    // 요리정보
+            		   cb.like(r.get("subject"), "%" + kw + "%"),
+            		    cb.like(r.get("content"), "%" + kw + "%"),
+            		    cb.like(u1.get("username"), "%" + kw + "%"),
+            		    cb.like(a.get("content"), "%" + kw + "%"),
+            		    cb.like(u2.get("username"), "%" + kw + "%"),
+            		    cb.like(r.get("category"), "%" + kw + "%"),
+            		    cb.like(r.get("travelInfo_place"), "%" + kw + "%"),
+            		    cb.like(r.get("place"), "%" + kw + "%"),
+            		    cb.like(r.get("travelInfo_day"), "%" + kw + "%"));
                }
            };
        }
@@ -197,37 +199,15 @@ public class TravelService {
           return this.travelRepository.findByCategory(category);
       }
       
-      // 모든 게시물(section)
-//      public Page<travel> getAllList(int page, String kw) {
-//  	    List<Sort.Order> sorts = new ArrayList<>();
-//  	    sorts.add(Sort.Order.desc("createDate"));
-//  	    int pageSize = 20; 
-//  	    int totalColumns = 4; 
-//  	    int totalRows = 5; 
-//  	    int totalItemsPerPage = totalRows * totalColumns;
-//
-//  	    int offset = (page / totalItemsPerPage) * totalItemsPerPage;
-//  	    int adjustedPage = page % totalItemsPerPage;
-//
-//  	    Pageable pageable = PageRequest.of(0, Integer.MAX_VALUE, Sort.by(sorts)); // Fetch all items
-//  	    Specification<travel> spec = search(kw);
-//
-//  	    Page<travel> result = this.travelRepository.findAll(spec, pageable);
-//  	    List<travel> content = result.getContent();
-//
-//  	    int start = offset >= content.size() ? content.size() : offset;
-//  	    int end = Math.min(start + totalItemsPerPage, content.size());
-//
-//  	    List<travel> contentForPage = new ArrayList<>();
-//  	    for (int i = start; i < end; i++) {
-//  	        contentForPage.add(content.get(i));
-//  	    }
-//
-//  	    int adjustedPageNumber = adjustedPage / totalColumns + (adjustedPage % totalColumns > 0 ? 1 : 0);
-//  	    Pageable adjustedPageable = PageRequest.of(adjustedPageNumber, pageSize, Sort.by(sorts));
-//  	    
-//  	    return new PageImpl<>(contentForPage, adjustedPageable, content.size());
-//  	}
+      public List<Travel> getListByPlace(String place) {
+    	  if (place == null || place.isEmpty()) {
+    		  // 카테고리가 null이거나 비어있으면 전체 목록 반환
+    		  return this.travelRepository.findAll();
+    	  }
+    	  // Repository에서 카테고리별로 조회
+    	  return this.travelRepository.findByPlace(place);
+      }
+      
       
       // 질문 수정 기능
       public void modify(Travel travel, String subject, MultipartFile file, String travelIntro, String category,
@@ -274,5 +254,27 @@ public class TravelService {
       public long getTotalCount() {
     	    return travelRepository.count();
       }
+      
+      public List<Travel> getListByFilter(String category, String place) {
+    	    
+    	    // 1) 필터 없음 → 전체
+    	    if ((category == null || category.isEmpty()) &&
+    	        (place == null || place.isEmpty())) {
+    	        return this.travelRepository.findAll();
+    	    }
+
+    	    // 2) category만
+    	    if (place == null || place.isEmpty()) {
+    	        return this.travelRepository.findByCategory(category);
+    	    }
+
+    	    // 3) place만
+    	    if (category == null || category.isEmpty()) {
+    	        return this.travelRepository.findByPlace(place);
+    	    }
+
+    	    // 4) category + place 모두 적용
+    	    return this.travelRepository.findByCategoryAndPlace(category, place);
+    	}
 
 }

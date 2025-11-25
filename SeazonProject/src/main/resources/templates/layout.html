@@ -41,6 +41,30 @@
 }
 .custom-navbar { display: flex; align-items: center; }
 .search-box { flex-shrink: 0; }
+
+.nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+}
+
+.left-nav, .right-nav {
+    display: flex;
+    align-items: center;
+}
+
+.center-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.nav-icon {
+    width: 60px;   /* 아이콘 크기 줄임 */
+    height: 60px;
+    object-fit: contain;
+}
 </style>
 
 <meta charset="UTF-8">
