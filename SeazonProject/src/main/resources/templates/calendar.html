@@ -111,7 +111,7 @@
      return trimmed.replace(/\./g, '-');
  };
 
- // 📌 1. 특정 날짜에 진행 중인 축제 수를 계산하는 함수
+ // 1. 특정 날짜에 진행 중인 축제 수를 계산하는 함수
  const getFestivalCounts = (year, month, festivalData) => {
      const counts = {};
      const monthStr = String(month).padStart(2, '0');
@@ -185,7 +185,7 @@
  };
 
 
- // 📌 2. 축제 리스트 출력 함수 (날짜 클릭 시 축제 카드들을 렌더링)
+ // 2. 축제 리스트 출력 함수 (날짜 클릭 시 축제 카드들을 렌더링)
  const renderFestivalList = (dateStr) => {
     const el = $('#festivalList');
     el.empty();
@@ -252,7 +252,7 @@
 };
 
 
- // 📌 3. 달력 셀 클릭 이벤트 핸들러
+ // 3. 달력 셀 클릭 이벤트 핸들러
  const clickDate = (dateStr) => {
      // 모든 셀의 selected 클래스 제거
      $('.calendar-cell').removeClass('selected');
@@ -268,7 +268,7 @@
  };
 
 
- // 📌 4. 달력을 실제로 HTML에 그리는 핵심 함수
+ // 4. 달력을 실제로 HTML에 그리는 핵심 함수
  const renderCalendar = (year, month) => {
      const calendarEl = $('#festivalCalendar');
      calendarEl.empty();
@@ -321,7 +321,7 @@
  };
 
   
-  // 📌 5. jQuery document.ready 이벤트 (최상위 실행 부분)
+  // 5. jQuery document.ready 이벤트 (최상위 실행 부분)
   $(document).ready(function() {
 
      // 현재 월 표시 업데이트
