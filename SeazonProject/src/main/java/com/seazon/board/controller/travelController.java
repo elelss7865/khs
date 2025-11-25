@@ -41,13 +41,6 @@ public class travelController {
 	private final TravelService travelService;
 	private final UserService userService;
 	private final UserRepository userRepository;
-
-//    @GetMapping("/list")
-//    public String list(Model model) {
-//        List<travel> questionList = this.questionService.getList();
-//        model.addAttribute("questionList", questionList);
-//        return "question_list";
-//    }
 	
 	// 페이징 구현(검색 기능 추가)
 	@GetMapping("/list")

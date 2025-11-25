@@ -47,11 +47,11 @@
     const currentYear = /*[[${currentYear}]]*/ 0;
     const currentMonth = /*[[${currentMonth}]]*/ 0;
     
-    console.log("🎉 festivalData (총 개수):", festivalData.length);
+    console.log("festivalData (총 개수):", festivalData.length);
     if (festivalData.length > 0) {
-        console.log("🎉 festivalData (첫 번째 항목):", festivalData[0]);
+        console.log("festivalData (첫 번째 항목):", festivalData[0]);
     }
-    console.log(`📅 Current Period: ${currentYear}-${currentMonth}`);
+    console.log(`Current Period: ${currentYear}-${currentMonth}`);
 </script>
 </head>
 
@@ -141,12 +141,12 @@
          // 날짜 객체가 유효하지 않으면 건너뛰기
          if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
              // [디버깅] Invalid Date 로그 출력
-             console.error(`🔴 Invalid Date for festival ${f.subject}: Normalized Start=${normalizedStartDateStr}, Normalized End=${normalizedEndDateStr}`);
+             console.error(`Invalid Date for festival ${f.subject}: Normalized Start=${normalizedStartDateStr}, Normalized End=${normalizedEndDateStr}`);
              return;
          }
          
          // [디버깅] 유효한 Date 객체 확인 로그
-         // console.log(`✅ Valid Date for ${f.subject}: Start=${startDate.toISOString().slice(0, 10)}, End=${endDate.toISOString().slice(0, 10)}`);
+         // console.log(`Valid Date for ${f.subject}: Start=${startDate.toISOString().slice(0, 10)}, End=${endDate.toISOString().slice(0, 10)}`);
 
 
          const firstDayOfMonth = new Date(year, month - 1, 1);
@@ -171,14 +171,14 @@
          }
      });
      
-     console.log("📊 Festival Counts for the month (All days):", counts);
+     console.log("Festival Counts for the month (All days):", counts);
      
      // [디버깅] 카운트가 1 이상인 날짜만 출력
      const positiveCounts = Object.entries(counts).filter(([key, value]) => value > 0);
      if (positiveCounts.length > 0) {
-         console.log("✅ Festival Counts (Positive):", positiveCounts);
+         console.log("Festival Counts (Positive):", positiveCounts);
      } else {
-         console.log("❌ No Festivals found in this month (All counts are 0).");
+         console.log("No Festivals found in this month (All counts are 0).");
      }
      
      return counts;
@@ -207,7 +207,7 @@
         return startDate.getTime() <= selectedDate.getTime() && selectedDate.getTime() <= endDate.getTime();
     });
 
-    console.log(`📝 Filtered list for ${dateStr}: ${filtered.length} festivals.`);
+    console.log(`Filtered list for ${dateStr}: ${filtered.length} festivals.`);
 
     if (filtered.length === 0) {
         el.append('<div class="col-12"><p class="text-center text-muted py-4">선택하신 날짜에 진행 중인 축제가 없습니다.</p></div>');

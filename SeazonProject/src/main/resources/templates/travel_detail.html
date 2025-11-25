@@ -1,7 +1,7 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-5">
 
-   <!-- ▣ 축제 제목 + 수정/삭제 버튼 (오른쪽) -->
+   <!-- 축제 제목 + 수정/삭제 버튼 (오른쪽) -->
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <!-- 제목 -->
@@ -28,7 +28,7 @@
     </div>
 </div>
 
-  <!-- ▣ 축제 설명 (윗부분 크게 노출) -->
+  <!-- 축제 설명 (윗부분 크게 노출) -->
   <p class="text-secondary fs-5" 
    style="white-space: pre-line;"
    th:text="${travel.travelIntro}">
@@ -39,7 +39,7 @@
     <!-- =============== 대표 이미지 + 정보 아이콘 리스트 =============== -->
     <div class="row mt-4">
 
-        <!-- ▣ 대표 이미지 (왼쪽) -->
+        <!-- 대표 이미지 (왼쪽) -->
         <div class="col-md-6 text-center">
             <img th:src="${travel.filePath}"
                  alt="대표 이미지"
@@ -47,7 +47,7 @@
                  style="max-height: 480px; object-fit: cover;">
         </div>
 
-        <!-- ▣ 정보 리스트 (오른쪽) -->
+        <!-- 정보 리스트 (오른쪽) -->
         <div class="col-md-6 mt-4 mt-md-0">
 
             <!-- 일정 -->
