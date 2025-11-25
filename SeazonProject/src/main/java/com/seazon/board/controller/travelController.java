@@ -162,10 +162,17 @@ public class travelController {
 //    @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String travelVote(Principal principal, @PathVariable("id") Integer id) {
-    	Travel travel = this.travelService.getTravel(id);
-    	SiteUser siteuser = this.userService.getUser(principal.getName());
-    	this.travelService.vote(travel, siteuser);
-    	return String.format("redirect:/travel/detail/%s", id);
+
+        // 로그인 안 되어 있으면 로그인 페이지로 이동
+        if (principal == null) {
+            return "redirect:/user/login";
+        }
+
+        Travel travel = this.travelService.getTravel(id);
+        SiteUser siteuser = this.userService.getUser(principal.getName());
+        this.travelService.vote(travel, siteuser);
+
+        return String.format("redirect:/travel/detail/%s", id);
     }
       
 }

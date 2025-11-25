@@ -5,36 +5,60 @@
 
 <head>
     <title>축제 달력</title>
+    <!-- jQuery는 layout.html에 있다고 가정합니다 -->
 
     <style>
+        /* =================================================================
+         * CSS: 달력 레이아웃 및 스타일 (생략 - 변경 없음)
+         * ================================================================= */
         body { font-family: 'Noto Sans KR', sans-serif; }
         .calendar-container { max-width: 900px; margin: 0 auto; padding: 20px; position: relative; }
         .calendar-container h2 { text-align: left!important; font-size: 1.2rem; font-weight: 700; margin-bottom: 5px!important; color:#495057; }
         .calendar-container .current-month { font-size: 2.5rem; font-weight: 800; color:#FF7732; display:block; margin-bottom:20px; }
+        
+        /* 월 이동 버튼 */
         .calendar-nav { position:absolute; top:50px; right:30px; z-index:15; display:flex; align-items:center; }
         .calendar-nav button { background:none; border:1px solid #ccc; border-radius:50%; width:38px; height:38px; color:#FF7732; font-weight:bold; font-size:1.2rem; margin-left:5px; cursor:pointer; transition:background-color 0.2s; }
         .calendar-nav button:hover { background-color:#f0f0f0; }
+        
+        /* 달력 헤더 및 본문 그리드 */
         .calendar-header, .calendar-body { display:grid; grid-template-columns:repeat(7,1fr); }
         .day-of-week { padding:15px 10px; text-align:center; font-size:1.1rem; font-weight:700; border-bottom:2px solid #FF7732; background-color:white; color:#495057; }
-        .day-of-week:nth-child(1){color:#dc3545;} .day-of-week:nth-child(7){color:#0d6efd;}
+        .day-of-week:nth-child(1){color:#dc3545;} /* 일요일 */
+        .day-of-week:nth-child(7){color:#0d6efd;} /* 토요일 */
+        
+        /* 달력 날짜 셀 */
         .calendar-cell { min-height:100px; padding:10px; text-align:center; border-right:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; cursor:pointer; position:relative; }
         .calendar-cell .date-number { font-size:1.5rem; font-weight:500; color:#495057; margin-bottom:5px; }
         .festival-count { font-size:0.8rem; color:#FF7732; display:block; margin-top:5px; font-weight:500; }
+        
+        /* 호버 및 선택 효과 */
         .calendar-cell:hover:not(.empty-cell):not(.selected){ background-color:rgba(255,119,50,0.10); border:3px solid #FF7732; border-radius:8px; margin:-2px; z-index:5; }
         .calendar-cell.selected { background-color:#FF7732!important; color:white!important; border:none!important; border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,0.1); }
         .calendar-cell.selected .date-number, .calendar-cell.selected .festival-count { color:white!important; }
     </style>
 
-    <!-- 서버 JSON 데이터 -->
+    <!-- 서버 JSON 데이터 및 변수 선언 (Thymeleaf) -->
  <script th:inline="javascript">
+    // 서버에서 전달된 JSON 데이터를 JavaScript 배열로 파싱
     const festivalData = JSON.parse(/*[[${festivalJson}]]*/ '[]');
-    console.log("🎉 festivalData =", festivalData);
+    
+    // 현재 년도와 월을 전역 변수로 정의
+    const currentYear = /*[[${currentYear}]]*/ 0;
+    const currentMonth = /*[[${currentMonth}]]*/ 0;
+    
+    console.log("🎉 festivalData (총 개수):", festivalData.length);
+    if (festivalData.length > 0) {
+        console.log("🎉 festivalData (첫 번째 항목):", festivalData[0]);
+    }
+    console.log(`📅 Current Period: ${currentYear}-${currentMonth}`);
 </script>
 </head>
 
 <body>
     <div layout:fragment="content" class="container my-3">
 
+        <!-- 달력 UI 영역 -->
         <div class="calendar-container">
             <div class="calendar-nav">
                 <button id="prevMonthBtn">&larr;</button>
@@ -59,130 +83,272 @@
 
         <hr class="my-5">
 
+        <!-- 축제 리스트 UI 영역 -->
         <h3>축제 리스트</h3>
         <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4" id="festivalList"></div>
 
  <script>
-$(document).ready(function() {
+ 
+ /*
+  * =================================================================
+  * 📌 JavaScript 핵심 로직 (달력 계산 및 리스트 렌더링)
+  * =================================================================
+  */
 
-    // 오늘 날짜
-    const today = new Date();
+ // [수정] 유틸리티 함수: 날짜 포맷을 YYYY-MM-DD로 변환 (2025.10.18 -> 2025-10-18)
+ const normalizeDate = (dateStr) => {
+     if (!dateStr) return null;
+     const trimmed = dateStr.trim();
+     
+     // 1. 점(.)으로 구분된 형식 (DB에서 넘어온 데이터 형식) 처리
+     const parts = trimmed.split('.');
+     if (parts.length === 3) {
+        // YYYY-MM-DD 형식으로 정확히 변환하여 Date 객체 생성에 용이하게 함
+        return `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+     }
+     
+     // 2. 이미 하이픈(-)으로 구분된 형식 처리 (대부분의 경우 Date 객체는 이 형식을 잘 인식함)
+     return trimmed.replace(/\./g, '-');
+ };
 
-    // URL에서 year, month 읽기
-    const urlParams = new URLSearchParams(window.location.search);
-    let currentYear = parseInt(urlParams.get("year"));
-    let currentMonth = parseInt(urlParams.get("month"));
+ // 📌 1. 특정 날짜에 진행 중인 축제 수를 계산하는 함수
+ const getFestivalCounts = (year, month, festivalData) => {
+     const counts = {};
+     const monthStr = String(month).padStart(2, '0');
+     
+     // 1-1. 해당 월의 모든 날짜 카운트 초기화
+     const daysInMonth = new Date(year, month, 0).getDate();
+     for (let day = 1; day <= daysInMonth; day++) {
+         const dateStr = `${year}-${monthStr}-${String(day).padStart(2, '0')}`;
+         counts[dateStr] = 0;
+     }
 
-    // 📌 URL 파라미터 없는 경우 → 오늘 기준
-    if (isNaN(currentYear) || isNaN(currentMonth)) {
-        currentYear = today.getFullYear();
-        currentMonth = today.getMonth() + 1;
-        window.history.replaceState({}, "", `/calendar?year=${currentYear}&month=${currentMonth}`);
-    }
+     festivalData.forEach(f => {
+         // 데이터베이스 필드 이름 사용: travel_start_date, travel_end_date
+ 		const startRaw = f.travel_start_date || f.date_start;
+   		 const endRaw   = f.travel_end_date || f.date_end;
 
-    $('.current-month').text(`${currentYear}.${String(currentMonth).padStart(2,'0')}`);
+    	const normalizedStartDateStr = normalizeDate(startRaw);
+   	 const normalizedEndDateStr   = normalizeDate(endRaw);
+         
+         if (!normalizedStartDateStr || !normalizedEndDateStr) return;
 
-    // 📌 날짜별 축제 개수 카운트
-    const getFestivalCounts = (year, month) => {
-        const counts = {};
-        const daysInMonth = new Date(year, month, 0).getDate();
+         // 1-2. Date 객체 생성 시, 'T00:00:00'을 추가하여 Timezone 문제 회피 (핵심)
+         // [수정] Date 객체 생성 전/후 로그 추가
+         const startDate = new Date(normalizedStartDateStr + 'T00:00:00');
+         const endDate = new Date(normalizedEndDateStr + 'T00:00:00');
 
-        for (let i = 1; i <= daysInMonth; i++) {
-            const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-            const active = festivalData.filter(f =>
-                new Date(f.date_start) <= new Date(dateStr)
-                && new Date(f.date_end) >= new Date(dateStr)
-            );
-            if (active.length > 0) counts[dateStr] = active.length;
-        }
-        return counts;
-    };
+         // 날짜 객체가 유효하지 않으면 건너뛰기
+         if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+             // [디버깅] Invalid Date 로그 출력
+             console.error(`🔴 Invalid Date for festival ${f.subject}: Normalized Start=${normalizedStartDateStr}, Normalized End=${normalizedEndDateStr}`);
+             return;
+         }
+         
+         // [디버깅] 유효한 Date 객체 확인 로그
+         // console.log(`✅ Valid Date for ${f.subject}: Start=${startDate.toISOString().slice(0, 10)}, End=${endDate.toISOString().slice(0, 10)}`);
 
-    // 📌 달력 렌더링
-    const renderCalendar = (year, month) => {
-        const calendarEl = $('#festivalCalendar');
-        calendarEl.empty();
-        $('.current-month').text(`${year}.${String(month).padStart(2,'0')}`);
 
-        const firstDay = new Date(year, month - 1, 1).getDay();
-        const daysInMonth = new Date(year, month, 0).getDate();
-        const counts = getFestivalCounts(year, month);
+         const firstDayOfMonth = new Date(year, month - 1, 1);
+         const lastDayOfMonth = new Date(year, month, 0);
 
-        for (let i = 0; i < firstDay; i++) {
-            calendarEl.append('<div class="calendar-cell empty-cell"></div>');
-        }
+         // 1-3. 축제 기간이 해당 월과 겹치는지 확인
+         if (startDate.getTime() <= lastDayOfMonth.getTime() && endDate.getTime() >= firstDayOfMonth.getTime()) {
+             
+             // 1-4. 겹치는 기간 중 해당 월에 속하는 날짜만 순회하며 카운트 증가
+             const loopStart = new Date(Math.max(startDate.getTime(), firstDayOfMonth.getTime())); 
+             const loopEnd = new Date(Math.min(endDate.getTime(), lastDayOfMonth.getTime()));
 
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-            const count = counts[dateStr] || 0;
+             let currentDate = new Date(loopStart);
+             // endDate는 축제가 끝난 다음 날로 계산되므로, <= 대신 <를 사용하여 당일 포함
+             while (currentDate.getTime() <= loopEnd.getTime()) { 
+                 const dateKey = currentDate.toISOString().slice(0, 10);
+                 if (counts[dateKey] !== undefined) {
+                     counts[dateKey]++;
+                 }
+                 currentDate.setDate(currentDate.getDate() + 1);
+             }
+         }
+     });
+     
+     console.log("📊 Festival Counts for the month (All days):", counts);
+     
+     // [디버깅] 카운트가 1 이상인 날짜만 출력
+     const positiveCounts = Object.entries(counts).filter(([key, value]) => value > 0);
+     if (positiveCounts.length > 0) {
+         console.log("✅ Festival Counts (Positive):", positiveCounts);
+     } else {
+         console.log("❌ No Festivals found in this month (All counts are 0).");
+     }
+     
+     return counts;
+ };
 
-            calendarEl.append(`
-                <div class="calendar-cell ${count>0 ? 'has-festivals':''}" data-date="${dateStr}">
-                    <div class="date-number">${day}</div>
-                    ${count>0 ? `<span class="festival-count">${count}개</span>`:''}
-                </div>
-            `);
-        }
 
-        $('.calendar-cell.has-festivals').on('click', clickDate);
-    };
+ // 📌 2. 축제 리스트 출력 함수 (날짜 클릭 시 축제 카드들을 렌더링)
+ const renderFestivalList = (dateStr) => {
+    const el = $('#festivalList');
+    el.empty();
 
-    // 📌 날짜 클릭 → 리스트 표시
-    function clickDate() {
-        const dateStr = $(this).data('date');
-        $('.calendar-cell').removeClass('selected');
-        $(this).addClass('selected');
-        renderFestivalList(dateStr);
-    }
+    const selectedDate = new Date(dateStr + 'T00:00:00');
 
-    // 📌 리스트 출력
-    const renderFestivalList = (dateStr) => {
-        const el = $('#festivalList');
-        el.empty();
+    const filtered = festivalData.filter(f => {
+        const startRaw = f.travel_start_date || f.date_start;
+        const endRaw   = f.travel_end_date || f.date_end;
 
-        const filtered = festivalData.filter(f =>
-            new Date(f.date_start) <= new Date(dateStr)
-            && new Date(f.date_end) >= new Date(dateStr)
-        );
+        const normalizedStartDateStr = normalizeDate(startRaw);
+        const normalizedEndDateStr   = normalizeDate(endRaw);
 
-        if (filtered.length === 0) {
-            el.append('<div class="col"><p>이 날에는 축제가 없습니다.</p></div>');
-        } else {
-            filtered.forEach(f => {
-                el.append(`
-                    <div class="col">
-                        <div class="card h-100">
-                            <img src="${f.image}" style="height:150px; object-fit:cover;">
-                            <div class="card-body">
-                                <h5 class="card-title">${f.subject}</h5>
-                                <p>${f.travelInfo_place}</p>
-                                <small>${f.date_start} ~ ${f.date_end}</small>
+        if (!normalizedStartDateStr || !normalizedEndDateStr) return false;
+
+        const startDate = new Date(normalizedStartDateStr + 'T00:00:00');
+        const endDate = new Date(normalizedEndDateStr + 'T00:00:00');
+
+        return startDate.getTime() <= selectedDate.getTime() && selectedDate.getTime() <= endDate.getTime();
+    });
+
+    console.log(`📝 Filtered list for ${dateStr}: ${filtered.length} festivals.`);
+
+    if (filtered.length === 0) {
+        el.append('<div class="col-12"><p class="text-center text-muted py-4">선택하신 날짜에 진행 중인 축제가 없습니다.</p></div>');
+    } else {
+
+        filtered.forEach(travel => {
+        	const imgSrc = travel.filePath || travel.image || travel.img || 'https://placehold.co/239x300?text=No+Image';
+            const place = travel.travelInfo_place || "장소 정보 없음";
+            const day = travel.travelInfo_day || `${travel.travel_start_date} ~ ${travel.travel_end_date}`;
+            const recommendCount = travel.voter ? travel.voter.length : 0;
+
+            el.append(`
+                <div class="col">
+                    <div class="card" style="width: 15rem;">
+                    <img src="${imgSrc}" style="width:239px; height:300px;" class="card-img-top"/>
+                        <div class="card-body">
+                            
+                            <h5 class="card-title fw-bold mb-1">
+                                <a href="/travel/detail/${travel.id}" class="text-decoration-none text-dark">
+                                    ${travel.subject}
+                                </a>
+                            </h5>
+
+                            <div class="card-text small text-secondary mb-1">
+                                기간: <span>${day}</span>
                             </div>
+
+                            <div class="card-text small text-secondary mb-3">
+                                장소: <span>${place}</span>
+                            </div>
+
+                            <div class="small text-muted border-top pt-2">
+                                추천수 : <span>${recommendCount}</span>
+                            </div>
+
                         </div>
                     </div>
-                `);
-            });
-        }
-    };
+                </div>
+            `);
+        });
+    }
+};
 
-    // 📌 월 이동
-    $('#prevMonthBtn').on('click', () => {
-        let m = currentMonth - 1;
-        let y = currentYear;
-        if (m < 1) { m = 12; y--; }
-        window.location.href = `/calendar?year=${y}&month=${m}`;
-    });
 
-    $('#nextMonthBtn').on('click', () => {
-        let m = currentMonth + 1;
-        let y = currentYear;
-        if (m > 12) { m = 1; y++; }
-        window.location.href = `/calendar?year=${y}&month=${m}`;
-    });
+ // 📌 3. 달력 셀 클릭 이벤트 핸들러
+ const clickDate = (dateStr) => {
+     // 모든 셀의 selected 클래스 제거
+     $('.calendar-cell').removeClass('selected');
 
-    renderCalendar(currentYear, currentMonth);
+     // 현재 클릭된 셀에 selected 클래스 추가 (선택 표시)
+     const targetCell = $(`[data-date="${dateStr}"]`);
+     if (targetCell.length) {
+         targetCell.addClass('selected');
+     }
 
-});
+     // 리스트 렌더링 함수 호출
+     renderFestivalList(dateStr); 
+ };
+
+
+ // 📌 4. 달력을 실제로 HTML에 그리는 핵심 함수
+ const renderCalendar = (year, month) => {
+     const calendarEl = $('#festivalCalendar');
+     calendarEl.empty();
+     
+     // 4-1. 해당 월의 정보 계산
+     const firstDayOfMonth = new Date(year, month - 1, 1);
+     const startDayOfWeek = firstDayOfMonth.getDay(); 
+     const daysInMonth = new Date(year, month, 0).getDate();
+     
+     // 4-2. 축제 카운트 데이터 미리 계산
+     const festivalCounts = getFestivalCounts(year, month, festivalData);
+
+     // 4-3. 이전 달의 빈 칸 채우기
+     for (let i = 0; i < startDayOfWeek; i++) {
+         calendarEl.append('<div class="calendar-cell empty-cell"></div>');
+     }
+
+     // 4-4. 해당 월의 날짜 채우기
+     for (let day = 1; day <= daysInMonth; day++) {
+         const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+         const count = festivalCounts[dateStr] || 0; // 카운트 값 가져오기
+         
+         const cell = $(`
+             <div class="calendar-cell" data-date="${dateStr}">
+                 <span class="date-number">${day}</span>
+                 <span class="festival-count">${count > 0 ? count + '개 축제' : ''}</span>
+             </div>
+         `);
+         
+         // 셀 클릭 이벤트 바인딩
+         cell.on('click', function() {
+             clickDate(dateStr);
+         });
+
+         calendarEl.append(cell);
+     }
+     
+     // 4-5. 달력 로딩 후, 기본으로 선택할 날짜 결정
+     const today = new Date();
+     const currentMonthYearMatch = (today.getFullYear() === year && today.getMonth() + 1 === month);
+
+     if (currentMonthYearMatch) {
+         const todayStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+         clickDate(todayStr); // 현재 월이면 오늘 날짜 선택
+     } else {
+         // 다른 월이면 월의 첫 날 선택
+         clickDate(`${year}-${String(month).padStart(2, '0')}-01`);
+     }
+
+ };
+
+  
+  // 📌 5. jQuery document.ready 이벤트 (최상위 실행 부분)
+  $(document).ready(function() {
+
+     // 현재 월 표시 업데이트
+     $('.current-month').text(`${currentYear}.${String(currentMonth).padStart(2,'0')}`);
+
+     // 월 이동 버튼 이벤트 처리 (쿼리 스트링 변경으로 페이지 이동)
+     $('#prevMonthBtn').on('click', () => {
+         let m = currentMonth - 1;
+         let y = currentYear;
+         if (m < 1) { m = 12; y--; }
+         window.location.href = `/calendar?year=${y}&month=${m}`;
+     });
+
+     $('#nextMonthBtn').on('click', () => {
+         let m = currentMonth + 1;
+         let y = currentYear;
+         if (m > 12) { m = 1; y++; }
+         window.location.href = `/calendar?year=${y}&month=${m}`;
+     });
+
+     // 최종: 달력 렌더링 시작
+     renderCalendar(currentYear, currentMonth);
+     
+
+     
+
+ });
 </script>
 
     </div>

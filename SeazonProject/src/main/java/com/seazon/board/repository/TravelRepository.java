@@ -13,26 +13,23 @@ import org.springframework.data.repository.query.Param;
 import com.seazon.board.domain.Travel;
 
 public interface TravelRepository extends JpaRepository<Travel, Integer> {
-	Travel findBySubject(String subject);   // findBySubject
+	Travel findBySubject(String subject);// findBySubject
 	List<Travel> findBySubjectLike(String subject); // findBySubjectLike(특정문자열 포함)
 	Page<Travel> findAll(Pageable pageable); // 페이징 구현하기
-	Page<Travel> findAll(Specification<Travel> spec, Pageable pageable);  // 검색기능
+	Page<Travel> findAll(Specification<Travel> spec, Pageable pageable);
 	
 	// 카테고리별로 모든 Travel 데이터를 조회하는 메서드 추가
     List<Travel> findByCategory(String category);
 	
 	@Modifying
 	@Query("UPDATE Travel q SET q.view = q.view + 1 WHERE q.id = :id")
-	void incrementViewCount(@Param("id") int id);        
-	
-//	@Query("SELECT t FROM Travel t WHERE t.travelInfo_day LIKE %:month%")
-//	    List<Travel> findByMonth(@Param("month") String month);// 추천축제
-	
-	@Query("SELECT t FROM Travel t WHERE SUBSTRING(t.travelInfo_day, 1, 4) = :year AND SUBSTRING(t.travelInfo_day, 6, 2) = :month")
-	List<Travel> findByYearAndMonth(@Param("year") String year,
-	                                @Param("month") String month);
+	void incrementViewCount(@Param("id") int id);
 	
 	@Query("SELECT t FROM Travel t WHERE substring(t.travelInfo_day, 6, 2) = :month")
 	List<Travel> findByMonth(@Param("month") String month);
+	
+    @Query("SELECT t FROM Travel t WHERE " + "t.travel_end_date >= :startOfMonthQuery AND " + "t.travel_start_date <= :endOfMonthQuery")
+        List<Travel> findFestivalsIntersectingMonth(@Param("startOfMonthQuery") String startOfMonthQuery,
+        		@Param("endOfMonthQuery") String endOfMonthQuery);
 	
 }
